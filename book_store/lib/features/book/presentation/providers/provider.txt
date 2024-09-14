@@ -1,0 +1,2 @@
+manage the state of the application, making it 
+available to the widgets 

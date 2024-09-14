@@ -1,0 +1,2 @@
+models represent the datastructures that transferred 
+between the data layer and the the business layer

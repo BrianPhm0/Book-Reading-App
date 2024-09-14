@@ -1,0 +1,3 @@
+represent the application's business logic
+coordinate between repositories, entities, and 
+other services

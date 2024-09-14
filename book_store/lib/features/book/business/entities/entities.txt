@@ -1,0 +1,2 @@
+represent the core business models and data 
+structures that your application operate on
