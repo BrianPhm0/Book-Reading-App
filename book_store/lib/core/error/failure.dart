@@ -1,0 +1,6 @@
+//class failure of Either
+
+class Failure {
+  final String message;
+  Failure([this.message = 'An unexpected error occurs']);
+}
