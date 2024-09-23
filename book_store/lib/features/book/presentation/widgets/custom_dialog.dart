@@ -20,11 +20,11 @@ class _CustomDialogState extends State<CustomDialog> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('Enter some text'),
+            title: const Text('Enter some text'),
             content: Form(
               key: _formKey,
               child: TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Input',
                   hintText: 'Type something here',
                 ),
@@ -41,13 +41,13 @@ class _CustomDialogState extends State<CustomDialog> {
             ),
             actions: [
               TextButton(
-                child: Text('Cancel'),
+                child: const Text('Cancel'),
                 onPressed: () {
                   Navigator.of(context).pop(); // Close the dialog
                 },
               ),
               ElevatedButton(
-                child: Text('Submit'),
+                child: const Text('Submit'),
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _formKey.currentState!.save(); // Save the input
@@ -66,11 +66,11 @@ class _CustomDialogState extends State<CustomDialog> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Submitted Text'),
+          title: const Text('Submitted Text'),
           content: Text('You entered: $inputText'),
           actions: [
             TextButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop(); // Close the result dialog
               },

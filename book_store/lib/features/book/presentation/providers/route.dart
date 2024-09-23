@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 enum AppRoute { login, signup, forgot, home, bottomnav, account }
 
 GoRouter goRouter() {
-  return GoRouter(initialLocation: '/bottomnav', routes: <RouteBase>[
+  return GoRouter(initialLocation: '/login', routes: <RouteBase>[
     GoRoute(
       path: '/login',
       name: AppRoute.login.name,

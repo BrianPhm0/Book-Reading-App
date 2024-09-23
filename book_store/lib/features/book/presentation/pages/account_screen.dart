@@ -314,7 +314,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 Container(
                   width: 60,
                   height: 6,
-                  margin: EdgeInsets.symmetric(vertical: 10),
+                  margin: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
                     color: Colors.grey[400],
                     borderRadius: BorderRadius.circular(3),

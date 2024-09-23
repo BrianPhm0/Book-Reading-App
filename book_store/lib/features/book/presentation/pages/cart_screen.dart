@@ -11,6 +11,6 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
-    return TextCustom(text: 'Carttt', fontSize: 30, color: Colors.black);
+    return const TextCustom(text: 'Carttt', fontSize: 30, color: Colors.black);
   }
 }

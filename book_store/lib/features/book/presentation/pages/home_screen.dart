@@ -69,11 +69,11 @@ class _HomeScreenState extends State<HomeScreen> {
       return Container(
         margin: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
         width: 200,
-        child: Text('$index'),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: Colors.grey,
         ),
+        child: Text('$index'),
       );
     }
 
@@ -82,11 +82,11 @@ class _HomeScreenState extends State<HomeScreen> {
       return Container(
         margin: const EdgeInsets.all(8),
         width: 170,
-        child: Text('$index'),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: Colors.grey,
         ),
+        child: Text('$index'),
       );
     }
 
@@ -168,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: GestureDetector(
                             onTap: () {
                               ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
+                                  .showSnackBar(const SnackBar(
                                 content: Text('heelo'),
                               ));
                             },
@@ -223,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemBuilder: buildItem2,
-                    separatorBuilder: (context, index) => Divider(),
+                    separatorBuilder: (context, index) => const Divider(),
                     itemCount: time.length),
               ),
               Container(
@@ -232,7 +232,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemBuilder: buildItem1,
-                    separatorBuilder: (context, index) => Divider(),
+                    separatorBuilder: (context, index) => const Divider(),
                     itemCount: 8),
               ),
 
@@ -242,7 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const TextCustom(
+                        TextCustom(
                             text: 'Latest Books',
                             fontSize: 30,
                             color: Colors.black),
@@ -256,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemBuilder: buildItem1,
-                    separatorBuilder: (context, index) => Divider(),
+                    separatorBuilder: (context, index) => const Divider(),
                     itemCount: 8),
               ),
             ],

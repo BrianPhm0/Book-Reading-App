@@ -11,6 +11,6 @@ class PageScreen extends StatefulWidget {
 class _PageScreenState extends State<PageScreen> {
   @override
   Widget build(BuildContext context) {
-    return TextCustom(text: 'Account', fontSize: 30, color: Colors.black);
+    return const TextCustom(text: 'Account', fontSize: 30, color: Colors.black);
   }
 }

@@ -1,9 +1,32 @@
+import 'package:book_store/features/book/presentation/bloc/auth_bloc.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
+
+import 'package:book_store/init_dependencies.dart';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyWidget());
+//connecting bloc with UI
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initDependencies();
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          //handle authentication logic
+
+          create: (context) => serviceLocator<AuthBloc>(),
+        ),
+        // Add a different bloc here if needed
+        // BlocProvider(
+        //   create: (context) => AnotherBloc(), // Replace with another bloc
+        // ),
+      ],
+      child: const MyWidget(), // Your main widget goes here
+    ),
+  );
 }
 
 class MyWidget extends StatelessWidget {
