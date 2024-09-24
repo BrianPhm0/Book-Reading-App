@@ -59,8 +59,6 @@ class _MyWidgetState extends State<MyWidget> {
 
   @override
   void initState() {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-    _auth.signOut();
     super.initState();
     context.read<AuthBloc>().add(AuthCurrentUser());
   }
