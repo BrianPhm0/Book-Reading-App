@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
-void showSnackBar(BuildContext context, String content,
+void showSnackBar(BuildContext context, String? content,
     {String? actionLabel, VoidCallback? action}) {
+  if (content == null || content.isEmpty) {
+    return; // Exit early if content is null or empty
+  }
+
   final snackBar = SnackBar(
     content: Text(content),
     duration: const Duration(

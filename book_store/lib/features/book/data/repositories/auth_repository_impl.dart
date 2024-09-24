@@ -3,8 +3,7 @@ import 'package:book_store/core/error/failure.dart';
 import 'package:book_store/features/book/business/entities/user.dart';
 import 'package:book_store/features/book/business/repositories/auth_repository.dart';
 import 'package:book_store/features/book/data/datasourses/auth_remote_data_source.dart';
-import 'package:flutter/material.dart';
-// ignore: implementation_imports
+
 import 'package:fpdart/src/either.dart';
 
 // Implement method
@@ -71,6 +70,20 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (e) {
       // Handle any other exceptions and return a general Failure
       return left(Failure('Check your email again'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> getCurrentUser() async {
+    try {
+      final user = await remoteDataSource.getCurrentUserData();
+      if (user == null) {
+        return left(Failure('User are not logged in!'));
+      }
+
+      return right(user);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
     }
   }
 }

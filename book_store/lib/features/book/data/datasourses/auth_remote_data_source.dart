@@ -7,6 +7,10 @@ import 'package:book_store/features/book/data/model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 
 abstract interface class AuthRemoteDataSource {
+  final firebase_auth.User? firebaseUser;
+
+  AuthRemoteDataSource(this.firebaseUser);
+
   Future<UserModel> signUpWithEmailPassword({
     required String name,
     required String email,
@@ -27,6 +31,8 @@ class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
   final firebase_auth.FirebaseAuth firebaseAuth;
 
   AuthRemoteDataSourceImple(this.firebaseAuth);
+  @override
+  firebase_auth.User? get firebaseUser => firebaseAuth.currentUser;
 
   @override
   Future<UserModel> logInWithEmailPassword({
@@ -119,19 +125,17 @@ class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
     try {
       final firebase_auth.User? firebaseUser = firebaseAuth.currentUser;
       if (firebaseUser != null) {
-        return UserModel(
-          firebaseUser.uid,
-          firebaseUser.displayName ?? '',
-          '', // Do not store the password
-          firebaseUser.email ?? '',
-          firebaseUser.phoneNumber ?? '',
-          '', // Address if available
-          'user', // Example role
-          firebaseUser.photoURL ?? '',
-        );
-      } else {
-        return null; // No user is currently logged in
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(firebaseUser.uid)
+            .get();
+        if (userDoc.exists) {
+          UserModel.fromJson(userDoc.data() as Map<String, dynamic>);
+        } else {
+          return null;
+        }
       }
+      return null;
     } catch (e) {
       throw ServerException(e.toString());
     }

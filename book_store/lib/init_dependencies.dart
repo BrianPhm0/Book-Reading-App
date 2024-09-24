@@ -1,4 +1,6 @@
+import 'package:book_store/core/common/cubits/cubit/user_cubit.dart';
 import 'package:book_store/features/book/business/repositories/auth_repository.dart';
+import 'package:book_store/features/book/business/usecases/user_current.dart';
 import 'package:book_store/features/book/business/usecases/user_forget_pass.dart';
 import 'package:book_store/features/book/business/usecases/user_login.dart';
 import 'package:book_store/features/book/business/usecases/user_sign_up.dart';
@@ -22,6 +24,8 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton(() => FirebaseAuth.instance);
 
   // Register data sources and repositories
+
+  serviceLocator.registerLazySingleton(() => UserCubit());
 }
 
 void _initAuth() {
@@ -42,8 +46,11 @@ void _initAuth() {
     //User Reset Pass
     ..registerFactory<UserForgetPass>(() => UserForgetPass(serviceLocator()))
     // Finally, register AuthBloc
+    ..registerFactory<CurrentUser>(() => CurrentUser(serviceLocator()))
     ..registerLazySingleton<AuthBloc>(() => AuthBloc(
         userSignUp: serviceLocator(),
         userLogin: serviceLocator(),
-        userForgetPass: serviceLocator()));
+        userForgetPass: serviceLocator(),
+        currentUser: serviceLocator(),
+        userCubit: serviceLocator()));
 }

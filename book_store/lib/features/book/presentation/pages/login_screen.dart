@@ -143,6 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: CustomButton(
                             name: 'Get Started',
                             onPressed: () {
+                              FocusScope.of(context).unfocus();
                               // Handle the Get Started button press
                               //handle success data
                               _formHandler.submit(() {

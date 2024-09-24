@@ -22,9 +22,11 @@ final class AuthSuccess extends AuthState {
 
 //auth failure
 final class AuthFailure extends AuthState {
-  final String message;
-  const AuthFailure(this.message);
+  final String? message;
+  const AuthFailure([this.message]);
 }
 
 // New state for successful password reset
 final class AuthPasswordResetSuccess extends AuthState {}
+
+// final class AuthCurrUser extends AuthState {}
