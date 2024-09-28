@@ -1,7 +1,8 @@
 import 'package:book_store/core/common/widgets/dialog.dart';
 import 'package:book_store/core/common/widgets/loader.dart';
 import 'package:book_store/core/utils/show_snackbar.dart';
-import 'package:book_store/features/book/presentation/bloc/auth_bloc.dart';
+import 'package:book_store/features/book/presentation/bloc/auth/auth_bloc.dart';
+
 import 'package:book_store/features/book/presentation/providers/handleSubmit.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';

@@ -31,4 +31,6 @@ final class AuthResetPass extends AuthEvent {
   const AuthResetPass({required this.email});
 }
 
-final class AuthCurrentUser extends AuthEvent {}
+final class AuthIsUserLoggedIn extends AuthEvent {}
+
+final class AuthUserSignOut extends AuthEvent {}

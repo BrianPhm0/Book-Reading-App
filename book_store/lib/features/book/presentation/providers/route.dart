@@ -1,11 +1,24 @@
+import 'package:book_store/features/book/business/entities/book_type.dart';
 import 'package:book_store/features/book/presentation/pages/account_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottom_nav_screen.dart';
+import 'package:book_store/features/book/presentation/pages/categories_books_screen.dart';
+import 'package:book_store/features/book/presentation/pages/categories_screen.dart';
 import 'package:book_store/features/book/presentation/pages/forgot_pass.dart';
 import 'package:book_store/features/book/presentation/pages/login_screen.dart';
 import 'package:book_store/features/book/presentation/pages/sign_up_screen.dart';
+
 import 'package:go_router/go_router.dart';
 
-enum AppRoute { login, signup, forgot, home, bottomnav, account }
+enum AppRoute {
+  login,
+  signup,
+  forgot,
+  home,
+  bottomnav,
+  account,
+  categoriyBooks,
+  categories
+}
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -40,10 +53,29 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: '/bottomnav/categories',
+        name: AppRoute.categories.name,
+        builder: (context, state) {
+          return const BottomNavScreen(initialIndex: 2);
+        },
+      ),
+      GoRoute(
         path: '/account',
         name: AppRoute.account.name,
         builder: (context, state) {
           return const AccountScreen();
+        },
+      ),
+      GoRoute(
+        path: '/categoryBooks',
+        name: AppRoute.categoriyBooks.name,
+        builder: (context, state) {
+          final bookType = state.extra as BookType;
+
+          return CategoriesBooksScreen(
+            bookTypeId: bookType.bookTypeId,
+            bookTypeName: bookType.bookTypeName,
+          );
         },
       ),
     ],

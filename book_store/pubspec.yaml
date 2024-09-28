@@ -49,6 +49,7 @@ dependencies:
   fpdart: ^1.1.0
   cloud_firestore: ^5.4.2
   riverpod: ^2.5.1
+  google_api_availability: ^5.0.0
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +78,17 @@ flutter:
     - assets/book_icon.png
     - assets/book_background.png
     - assets/account.png
+    - assets/categories/0.png
+    - assets/categories/1.png
+    - assets/categories/2.png
+    - assets/categories/3.png
+    - assets/categories/4.png
+    - assets/categories/5.png
+    - assets/categories/6.png
+    - assets/categories/7.png
+
+    #book cover
+    - assets/book_cover/book_cover.png
     
 
   # An image asset can refer to one or more resolution-specific "variants", see

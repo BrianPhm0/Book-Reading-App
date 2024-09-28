@@ -80,8 +80,17 @@ class AuthRepositoryImpl implements AuthRepository {
       if (user == null) {
         return left(Failure('User are not logged in!'));
       }
-
       return right(user);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> signOut() async {
+    try {
+      await remoteDataSource.signOut();
+      return right(null);
     } on ServerException catch (e) {
       return left(Failure(e.message));
     }

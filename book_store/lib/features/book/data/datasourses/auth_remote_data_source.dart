@@ -1,10 +1,13 @@
 //Data remote firebase
 
 import 'package:book_store/core/error/exceptions.dart';
+
+import 'package:book_store/features/book/data/model/book_type_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:book_store/features/book/data/model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:firebase_auth/firebase_auth.dart';
 
 abstract interface class AuthRemoteDataSource {
   final firebase_auth.User? firebaseUser;
@@ -24,6 +27,7 @@ abstract interface class AuthRemoteDataSource {
   Future<UserModel?> getCurrentUserData();
 
   Future<void> resetPassword({required String email});
+  Future<void> signOut();
 }
 
 //implement
@@ -48,16 +52,13 @@ class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
         throw const ServerException('User is null');
       }
 
-      return UserModel(
-        firebaseUser.uid,
-        firebaseUser.displayName,
-        '', // Do not store the password in plain text
-        firebaseUser.email ?? '',
-        firebaseUser.phoneNumber ?? '',
-        '', // Address if available
-        'user', // Example role
-        firebaseUser.photoURL ?? '',
-      );
+      final userModel = await getCurrentUserData();
+
+      if (userModel == null) {
+        throw const ServerException('Failed to retrieve user data.');
+      }
+
+      return userModel;
     } on firebase_auth.FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'user-not-found':
@@ -88,12 +89,14 @@ class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
           .collection('users')
           .doc(firebaseUser.uid)
           .set({
-        'name': name,
+        'id': firebaseUser.uid,
+        'userName': name,
+        'password': '',
         'email': firebaseUser.email ?? '',
-        'phoneNumber': firebaseUser.phoneNumber ?? '',
+        'phone': firebaseUser.phoneNumber ?? '',
         'address': '',
-        'role': 'user', // Example role
-        'photoURL': firebaseUser.photoURL ?? '',
+        'roleId': 'user', // Example role
+        'image': firebaseUser.photoURL ?? '',
         // Add any other fields you need
       });
 
@@ -123,14 +126,16 @@ class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
   @override
   Future<UserModel?> getCurrentUserData() async {
     try {
-      final firebase_auth.User? firebaseUser = firebaseAuth.currentUser;
+      final firebaseUser = firebaseAuth.currentUser;
       if (firebaseUser != null) {
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
             .collection('users')
             .doc(firebaseUser.uid)
             .get();
         if (userDoc.exists) {
-          UserModel.fromJson(userDoc.data() as Map<String, dynamic>);
+          final data = userDoc.data() as Map<String, dynamic>;
+
+          return UserModel.fromJson(data);
         } else {
           return null;
         }
@@ -149,6 +154,15 @@ class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
       throw ServerException('Error resetting password: ${e.message}');
     } catch (e) {
       throw ServerException('An unknown error occurred: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> signOut() async {
+    try {
+      FirebaseAuth.instance.signOut();
+    } catch (e) {
+      throw ServerException(e.toString());
     }
   }
 }

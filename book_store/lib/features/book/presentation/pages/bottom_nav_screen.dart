@@ -7,23 +7,30 @@ import 'package:book_store/features/book/presentation/widgets/navigation_menu.da
 import 'package:flutter/material.dart';
 
 class BottomNavScreen extends StatefulWidget {
-  const BottomNavScreen({super.key});
+  final int initialIndex;
+
+  const BottomNavScreen({super.key, this.initialIndex = 0});
 
   @override
   State<BottomNavScreen> createState() => _BottomNavScreenState();
 }
 
 class _BottomNavScreenState extends State<BottomNavScreen> {
-  int _selectedIndex = 0;
+  late int _selectedIndex; // Use late initialization
 
-  //Another Screen
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
     LibraryScreen(),
     CategoriesScreen(),
     CartScreen(),
-    SearchScreen()
+    SearchScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex; // Initialize here
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -36,28 +43,30 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-              selectedLabelStyle: TextStyle(fontFamily: 'Schyler'),
-              unselectedLabelStyle: TextStyle(fontFamily: 'Schyler'))),
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          selectedLabelStyle: TextStyle(fontFamily: 'Schyler'),
+          unselectedLabelStyle: TextStyle(fontFamily: 'Schyler'),
+        ),
+      ),
       home: Scaffold(
         body: _widgetOptions[_selectedIndex],
         bottomNavigationBar: NavigationMenu(
-            backgroudColor: Colors.white,
-            selectedItemColor: Colors.black,
-            unselectedItemColor: Colors.grey,
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.book_online), label: 'Library'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.category), label: 'Categories'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.shopping_cart), label: 'Cart'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.search), label: 'Search'),
-            ]),
+          backgroudColor: Colors.white,
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.grey,
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.book_online), label: 'Library'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.category), label: 'Categories'),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.shopping_cart), label: 'Cart'),
+            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+          ],
+        ),
       ),
     );
   }

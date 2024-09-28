@@ -29,4 +29,5 @@ final class AuthFailure extends AuthState {
 // New state for successful password reset
 final class AuthPasswordResetSuccess extends AuthState {}
 
+final class AuthSignOutSuccess extends AuthState {}
 // final class AuthCurrUser extends AuthState {}

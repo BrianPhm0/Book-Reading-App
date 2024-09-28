@@ -15,10 +15,13 @@ class _LibraryScreenState extends State<LibraryScreen> {
       // padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.grey,
+        color: Colors.white,
       ),
-      width: 50,
-      height: 150,
+
+      child: Image.asset(
+        'assets/book_cover/book_cover.png',
+        fit: BoxFit.cover,
+      ),
     );
   }
 
@@ -34,9 +37,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
         child: GridView.builder(
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              mainAxisExtent: 300,
-              crossAxisSpacing: 30,
-              mainAxisSpacing: 20),
+              mainAxisExtent: 280,
+              crossAxisSpacing: 15,
+              mainAxisSpacing: 15),
           itemBuilder: buildItem,
           itemCount: 20,
         ),
