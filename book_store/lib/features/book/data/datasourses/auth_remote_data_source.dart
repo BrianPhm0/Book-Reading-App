@@ -2,7 +2,6 @@
 
 import 'package:book_store/core/error/exceptions.dart';
 
-import 'package:book_store/features/book/data/model/book_type_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:book_store/features/book/data/model/user_model.dart';

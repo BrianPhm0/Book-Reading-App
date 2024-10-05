@@ -1,7 +1,6 @@
 import 'package:book_store/core/error/failure.dart';
 import 'package:book_store/features/book/business/entities/book.dart';
 import 'package:book_store/features/book/business/entities/book_type.dart';
-import 'package:book_store/features/book/data/model/book_model.dart';
 
 import 'package:fpdart/fpdart.dart';
 

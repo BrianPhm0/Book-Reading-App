@@ -1,7 +1,9 @@
 import 'package:book_store/core/common/widgets/loader.dart';
+import 'package:book_store/features/book/business/entities/book.dart';
+import 'package:book_store/features/book/data/model/book_model.dart';
 import 'package:book_store/features/book/presentation/bloc/book/bloc/book_bloc.dart';
+import 'package:book_store/features/book/presentation/pages/detail_book_bottom_sheet.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
-import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar_leading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,17 +34,21 @@ class _CategoriesBooksScreenState extends State<CategoriesBooksScreen> {
     }
   }
 
-  Widget buildItem(BuildContext context, int index, String title) {
-    return Container(
-      // padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.white,
-      ),
+  Widget buildItem(BuildContext context, int index, String title,
+      {required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        // padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
+        ),
 
-      child: Image.asset(
-        'assets/book_cover/book_cover.png',
-        fit: BoxFit.cover,
+        child: Image.asset(
+          'assets/book_cover/book_cover.png',
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -85,8 +91,11 @@ class _CategoriesBooksScreenState extends State<CategoriesBooksScreen> {
                   crossAxisSpacing: 15,
                   mainAxisSpacing: 15,
                 ),
-                itemBuilder: (context, index) =>
-                    buildItem(context, index, state.booksByType[index].title),
+                itemBuilder: (context, index) => buildItem(
+                    context, index, state.booksByType[index].title, onTap: () {
+                  _showDetailBookSheet(context, state.booksByType[index]);
+                  print(state.booksByType[index]);
+                }),
                 itemCount: state.booksByType.length,
               ),
             );
@@ -97,5 +106,14 @@ class _CategoriesBooksScreenState extends State<CategoriesBooksScreen> {
         },
       ),
     );
+  }
+
+  void _showDetailBookSheet(BuildContext context, Book book) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return DetailBookBottomSheet(book: book);
+        },
+        isScrollControlled: true);
   }
 }

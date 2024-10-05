@@ -2,7 +2,6 @@ import 'package:book_store/features/book/business/entities/book_type.dart';
 import 'package:book_store/features/book/presentation/pages/account_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottom_nav_screen.dart';
 import 'package:book_store/features/book/presentation/pages/categories_books_screen.dart';
-import 'package:book_store/features/book/presentation/pages/categories_screen.dart';
 import 'package:book_store/features/book/presentation/pages/forgot_pass.dart';
 import 'package:book_store/features/book/presentation/pages/login_screen.dart';
 import 'package:book_store/features/book/presentation/pages/sign_up_screen.dart';

@@ -83,10 +83,56 @@ class _HomeScreenState extends State<HomeScreen> {
         margin: const EdgeInsets.all(8),
         width: 170,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.grey,
+          borderRadius: BorderRadius.circular(10),
+          color: const Color(0xFFE3E8E9),
         ),
-        child: Text('$index'),
+        child: Column(children: [
+          Expanded(
+              flex: 4,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  child: Image.asset(
+                    'assets/book_cover/book_cover.png',
+                    fit: BoxFit.fitHeight,
+                  ),
+                ),
+              )),
+          Expanded(
+              flex: 3,
+              child: Container(
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(12),
+                      bottomRight: Radius.circular(12),
+                    ),
+                    color: Color(0xFF171515)),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(),
+                      TextCustom(
+                          text: 'young adult',
+                          fontSize: 12,
+                          color: Colors.white),
+                      TextCustom(
+                          text: 'Sorrow and Starlight',
+                          fontSize: 18,
+                          maxLines: 2,
+                          textOverflow: TextOverflow.ellipsis,
+                          color: Colors.white),
+                      Spacer(),
+                      TextCustom(
+                          text: '\$25', fontSize: 20, color: Colors.white),
+                    ],
+                  ),
+                ),
+              ))
+        ]),
       );
     }
 
@@ -228,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Container(
                 padding: const EdgeInsets.all(8),
-                height: 250,
+                height: 300,
                 child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemBuilder: buildItem1,
@@ -252,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
               Container(
                 padding: const EdgeInsets.all(8),
-                height: 250,
+                height: 300,
                 child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemBuilder: buildItem1,
