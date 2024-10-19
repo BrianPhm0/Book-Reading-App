@@ -19,14 +19,6 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
-  // final oldController = TextEditingController();
-  // final passController = TextEditingController();
-  // final confirmPassController = TextEditingController();
-
-  // String? email;
-
-  // final formKey = GlobalKey<FormState>();
-  // @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,14 +1,17 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:book_store/features/book/business/entities/book.dart';
+import 'package:book_store/features/book/business/entities/user.dart';
 import 'package:book_store/features/book/presentation/widgets/custom_button.dart';
 import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
 import 'package:flutter/material.dart';
 
 class DetailBookBottomSheet extends StatefulWidget {
   final Book book;
+  final User user;
   const DetailBookBottomSheet({
     super.key,
     required this.book,
+    required this.user,
   });
 
   @override
@@ -19,8 +22,6 @@ class _DetailBookBottomSheetState extends State<DetailBookBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    final halfScreenWidth = mediaQuery.size.width / 2.3;
-    final halfScreenHeight = mediaQuery.size.height / 3;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -58,46 +59,53 @@ class _DetailBookBottomSheetState extends State<DetailBookBottomSheet> {
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Row(
                       children: [
-                        SizedBox(
-                          width: halfScreenWidth,
-                          height: halfScreenHeight,
+                        Flexible(
+                          flex: 4,
                           child: Image.asset(
                             'assets/book_cover/book_cover.png',
                             fit: BoxFit.cover,
                           ),
                         ),
-                        const SizedBox(width: 25),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TextCustom(
-                              text:
-                                  ' Rating: ${widget.book.rating.toString()}/5',
-                              fontSize: 24,
-                              color: Colors.black,
-                            ),
-                            TextCustom(
-                              text:
-                                  ' Pricing: \$${widget.book.price.toString()}',
-                              fontSize: 25,
-                              color: Colors.black,
-                            ),
-                            const SizedBox(height: 20),
-                            SizedBox(
-                              height: 50,
-                              width: 160, // Set a width for the button
-                              child: CustomButton(
-                                name: 'Add to Cart',
-                                onPressed: () {
-                                  print('Added to cart');
-                                },
+                        const SizedBox(width: 10),
+                        Flexible(
+                          flex: 5,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              FittedBox(
+                                child: TextCustom(
+                                  text:
+                                      'Rating: ${widget.book.rating.toString()}/5',
+                                  fontSize: 15,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
-                          ],
+                              FittedBox(
+                                child: TextCustom(
+                                  text:
+                                      'Pricing: \$${widget.book.price.toString()}',
+                                  fontSize: 20,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              FittedBox(
+                                child: CustomButton(
+                                  rectangle: 5,
+                                  name: 'Add to Cart',
+                                  onPressed: () {
+                                    print('Added to cart');
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

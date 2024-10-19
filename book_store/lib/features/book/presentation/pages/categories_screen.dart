@@ -95,7 +95,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   index,
                   state.bookType[index].bookTypeName,
                   onTap: () {
-                    context.goNamed(AppRoute.categoriyBooks.name,
+                    context.pushNamed(AppRoute.categoriyBooks.name,
                         extra: state.bookType[index]);
                   },
                 ),

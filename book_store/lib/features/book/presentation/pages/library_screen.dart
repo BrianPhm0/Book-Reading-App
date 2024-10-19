@@ -11,16 +11,13 @@ class LibraryScreen extends StatefulWidget {
 
 class _LibraryScreenState extends State<LibraryScreen> {
   Widget buildItem(context, index) {
-    return Container(
-      // padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.white,
-      ),
-
+    return GestureDetector(
+      onTap: () {
+        print("haha");
+      },
       child: Image.asset(
         'assets/book_cover/book_cover.png',
-        fit: BoxFit.cover,
+        fit: BoxFit.contain, // Maintains the original aspect ratio
       ),
     );
   }

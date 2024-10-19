@@ -52,13 +52,6 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/bottomnav/categories',
-        name: AppRoute.categories.name,
-        builder: (context, state) {
-          return const BottomNavScreen(initialIndex: 2);
-        },
-      ),
-      GoRoute(
         path: '/account',
         name: AppRoute.account.name,
         builder: (context, state) {

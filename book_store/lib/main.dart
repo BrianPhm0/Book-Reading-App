@@ -4,6 +4,7 @@ import 'package:book_store/features/book/presentation/bloc/auth/auth_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/book/bloc/book_bloc.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/init_dependencies.dart';
+import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,26 +12,34 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initDependencies();
   runApp(
-    MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          //handle authentication logic
-          create: (context) => serviceLocator<AuthBloc>(),
-        ),
-        BlocProvider(
-          //handle authentication logic
-          create: (context) => serviceLocator<UserCubit>(),
-        ),
-        BlocProvider(
-          //handle authentication logic
-          create: (context) => serviceLocator<BookBloc>(),
-        )
-        // Add a different bloc here if needed
-        // BlocProvider(
-        //   create: (context) => AnotherBloc(), // Replace with another bloc
-        // ),
+    DevicePreview(
+      enabled: true,
+      tools: const [
+        ...DevicePreview.defaultTools,
+        // CustomPlugin(),
       ],
-      child: const MyWidget(), // Your main widget goes here
+      builder: (context) => MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            // handle authentication logic
+            create: (context) => serviceLocator<AuthBloc>(),
+          ),
+          BlocProvider(
+            // handle user logic
+            create: (context) => serviceLocator<UserCubit>(),
+          ),
+          BlocProvider(
+            // handle book logic
+            create: (context) => serviceLocator<BookBloc>(),
+            lazy: false,
+          ),
+          // Add a different bloc here if needed
+          // BlocProvider(
+          //   create: (context) => AnotherBloc(), // Replace with another bloc
+          // ),
+        ],
+        child: const MyWidget(), // Your main widget goes here
+      ),
     ),
   );
 }
@@ -77,8 +86,8 @@ class _MyWidgetState extends State<MyWidget> {
         return BlocListener<UserCubit, UserState>(
           listener: (context, state) {
             if (state is UserLoggedIn) {
-              print('hihi');
-              print(state);
+              // print('hihi');
+              // print(state);
               AppRouter.goTo('/bottomnav');
             }
           },
