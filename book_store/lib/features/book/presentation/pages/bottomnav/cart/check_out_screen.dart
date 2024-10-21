@@ -140,11 +140,16 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                   padding: const EdgeInsets.only(left: 20),
                                   child: Row(
                                     children: [
-                                      const Icon(
-                                        Icons.check_circle,
-                                        size: 30,
-                                        color: Colors.black,
+                                      const SizedBox(
+                                        width: 10,
                                       ),
+                                      SizedBox(
+                                          width:
+                                              30, // Adjust the width as needed
+                                          height: 30,
+                                          child: Image.asset(
+                                              fit: BoxFit.contain,
+                                              "assets/payment/payment${selectedPayment + 1}.png")),
                                       const SizedBox(
                                         width: 10,
                                       ),

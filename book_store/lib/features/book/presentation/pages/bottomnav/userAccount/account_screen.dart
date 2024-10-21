@@ -18,6 +18,7 @@ class AccountScreen extends StatefulWidget {
   State<AccountScreen> createState() => _AccountScreenState();
 }
 
+/// username, password, email, phone, address,
 class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
@@ -29,13 +30,13 @@ class _AccountScreenState extends State<AccountScreen> {
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 18),
-            child: GestureDetector(
+            child: InkWell(
               onTap: () {
                 context.goNamed(AppRoute.bottomnav.name);
               },
               child: const TextCustom(
                 text: 'Done',
-                fontSize: 20,
+                fontSize: 23,
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
@@ -70,125 +71,109 @@ class _AccountScreenState extends State<AccountScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Row(),
-          SizedBox(
-            height: 120,
-            width: 120,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(100),
-              child: const Image(
-                image: AssetImage('assets/account.png'),
-              ),
-            ),
+          _buildInfoUser(context, user.userName ?? 'User', user.email),
+          const SizedBox(height: 30),
+          _buildInfoTile(context, 'Notifications'),
+          const SizedBox(height: 30),
+          _buildInfoTile(
+            context,
+            'Manage Hidden Purchases',
           ),
-          const SizedBox(height: 20),
-          _buildInfoTile(context, 'Name', user.userName ?? '', Icons.person),
-          const SizedBox(height: 20),
-          _buildInfoTile(context, 'Email', user.email, Icons.email),
-          const SizedBox(height: 20),
-          _buildInfoTile(context, 'Phone', user.phone ?? '+94', Icons.phone),
-          const SizedBox(height: 20),
-          ListTile(
+          const SizedBox(height: 30),
+          _buildInfoTile(
+            context,
+            'Redeem Gift Card or Code',
+          ),
+          const SizedBox(height: 30),
+          InkWell(
             onTap: () {
-              _showBottomSheet(context);
+              context.pushNamed(AppRoute.settings.name);
             },
-            title: const TextCustom(
-              text: 'Password',
-              fontSize: 25,
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
+            child: _buildInfoTile(
+              context,
+              'View Account Settings',
             ),
-            subtitle: const TextCustom(
-              color: Colors.black,
-              fontSize: 25,
-              text: '**********',
-            ),
-            leading: const Icon(Icons.password, color: Colors.black, size: 35),
-            trailing:
-                const Icon(Icons.arrow_forward, color: Colors.black, size: 35),
-            tileColor: Colors.grey,
           ),
-          const SizedBox(height: 35),
+          const SizedBox(height: 30),
           _buildEditAndSignOutButtons(context),
         ],
       ),
     );
   }
 
-  Widget _buildInfoTile(
-      BuildContext context, String title, String value, IconData icon) {
+  Widget _buildInfoTile(BuildContext context, String title) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(0, 5),
-            color: Colors.grey,
-            spreadRadius: 5,
-            blurRadius: 10,
-          ),
-        ],
-      ),
-      child: ListTile(
-        title: TextCustom(
+      decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: const BorderRadius.all(Radius.circular(10))),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 20, top: 5, bottom: 5),
+        child: TextCustom(
           text: title,
           fontSize: 25,
           color: Colors.black,
-          fontWeight: FontWeight.bold,
         ),
-        subtitle: TextCustom(
-          color: Colors.black,
-          fontSize: 25,
-          text: value,
+      ),
+    );
+  }
+
+  Widget _buildInfoUser(BuildContext context, String title, String value) {
+    return Container(
+      height: 80,
+      decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: const BorderRadius.all(Radius.circular(20))),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const Icon(
+              Icons.account_circle_sharp,
+              size: 65,
+            ),
+            // Icon(icon, color: Colors.black, size: 30),
+            Padding(
+              padding: const EdgeInsets.only(left: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  TextCustom(
+                    text: title,
+                    fontSize: 30,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  TextCustom(
+                    color: Colors.black,
+                    fontSize: 25,
+                    text: value,
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
-        leading: Icon(icon, color: Colors.black, size: 35),
-        tileColor: Colors.grey,
       ),
     );
   }
 
   Widget _buildEditAndSignOutButtons(BuildContext context) {
-    return Column(
-      children: [
-        SizedBox(
-          height: 50,
-          width: double.infinity,
-          child: CustomButton(
-            name: 'Edit',
-            size: 23,
-            onPressed: () {},
-          ),
-        ),
-        const SizedBox(height: 10),
-        SizedBox(
-          height: 50,
-          width: double.infinity,
-          child: CustomButton(
-            backgroundColor: Colors.red,
-            name: 'Sign Out',
-            size: 23,
-            onPressed: () {
-              context.read<AuthBloc>().add(AuthUserSignOut());
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _showBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true, // Allows for custom height of the bottom sheet
-      builder: (BuildContext context) {
-        return ChangePasswordBottomSheet(
-          onSave: (oldPassword, newPassword) {
-            // Handle the password change logic here
-            // You can call your authentication service or bloc here to change the password
-          },
-        );
-      },
+    return SizedBox(
+      height: 50,
+      width: double.infinity,
+      child: CustomButton(
+        backgroundColor: Colors.red,
+        name: 'Sign Out',
+        size: 23,
+        borderColor: Colors.red,
+        onPressed: () {
+          context.read<AuthBloc>().add(AuthUserSignOut());
+        },
+      ),
     );
   }
 }

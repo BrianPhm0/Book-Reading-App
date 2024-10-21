@@ -5,6 +5,7 @@ import 'package:book_store/features/book/presentation/pages/bottomnav/userAccoun
 import 'package:book_store/features/book/presentation/pages/bottomnav/bottom_nav_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/categories/categories_books_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/check_out_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/userAccount/settings_screen.dart';
 import 'package:book_store/features/book/presentation/pages/userlogin/forgot_pass.dart';
 import 'package:book_store/features/book/presentation/pages/userlogin/login_screen.dart';
 import 'package:book_store/features/book/presentation/pages/userlogin/sign_up_screen.dart';
@@ -22,7 +23,8 @@ enum AppRoute {
   categories,
   checkout,
   address,
-  paymentSuccess
+  paymentSuccess,
+  settings
 }
 
 class AppRouter {
@@ -95,6 +97,13 @@ class AppRouter {
         name: AppRoute.paymentSuccess.name,
         builder: (context, state) {
           return const PaymentSuccessScreen();
+        },
+      ),
+      GoRoute(
+        path: '/settings',
+        name: AppRoute.settings.name,
+        builder: (context, state) {
+          return const SettingsScreen();
         },
       ),
     ],

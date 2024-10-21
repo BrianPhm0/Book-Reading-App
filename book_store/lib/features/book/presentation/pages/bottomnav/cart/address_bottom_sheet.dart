@@ -126,9 +126,9 @@ class _AddressBottomSheetState extends State<AddressBottomSheet> {
                     context.pushNamed(AppRoute.address.name);
                     Navigator.pop(context);
                   },
-                  child: const Icon(
+                  child: Icon(
                     Icons.create,
-                    color: Colors.black,
+                    color: selected == index ? Colors.black : Colors.grey,
                     size: 30,
                   ),
                 ),
