@@ -82,7 +82,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/book_icon.png
-    - assets/book_background.png
+    
     - assets/account.png
     - assets/categories/0.png
     - assets/categories/1.png
@@ -95,8 +95,11 @@ flutter:
 
     #book cover
     - assets/book_cover/book_cover.png
-    
-
+    #payment
+    - assets/payment/payment1.png
+    - assets/payment/payment2.png
+    - assets/payment/payment3.png
+    - assets/payment/payment_success.gif
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

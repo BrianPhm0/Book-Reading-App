@@ -3,7 +3,7 @@ import 'package:book_store/core/common/widgets/loader.dart';
 import 'package:book_store/features/book/business/entities/book.dart';
 import 'package:book_store/features/book/business/entities/user.dart';
 import 'package:book_store/features/book/presentation/bloc/book/bloc/book_bloc.dart';
-import 'package:book_store/features/book/presentation/pages/detail_book_bottom_sheet.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/categories/detail_book_bottom_sheet.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

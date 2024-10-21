@@ -64,15 +64,61 @@ class _HomeScreenState extends State<HomeScreen> {
     List<String> time = ['This Week', 'This Month', 'This Year'];
     //Separate when get data to file book_liste
     //Best Deal
-    Widget buildItem(context, index) {
+
+    Widget buildItem(BuildContext context, int index) {
       return Container(
         margin: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
-        width: 200,
+        alignment: Alignment.center,
+        height: 160,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.grey,
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(10),
         ),
-        child: Text('$index'),
+        child: Row(
+          children: [
+            Flexible(
+              flex: 4,
+              child: Image.asset(
+                'assets/book_cover/book_cover.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            const Flexible(
+              flex: 5,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Spacer(),
+                    TextCustom(
+                      text: "Novel",
+                      color: Colors.white,
+                      fontSize: 10,
+                    ),
+                    TextCustom(
+                      text: "TuesDay Mooney Talks to Ghost",
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                    TextCustom(
+                      text: "Kate Racculia",
+                      color: Colors.white,
+                      fontSize: 15,
+                    ),
+                    Spacer(),
+                    TextCustom(
+                      text: "\$105.00",
+                      fontSize: 30,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    Spacer(),
+                  ]),
+            ),
+          ],
+        ),
       );
     }
 

@@ -1,10 +1,13 @@
 import 'package:book_store/features/book/business/entities/book_type.dart';
-import 'package:book_store/features/book/presentation/pages/account_screen.dart';
-import 'package:book_store/features/book/presentation/pages/bottom_nav_screen.dart';
-import 'package:book_store/features/book/presentation/pages/categories_books_screen.dart';
-import 'package:book_store/features/book/presentation/pages/forgot_pass.dart';
-import 'package:book_store/features/book/presentation/pages/login_screen.dart';
-import 'package:book_store/features/book/presentation/pages/sign_up_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/cart/add_address_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/cart/payment_success_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/userAccount/account_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/bottom_nav_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/categories/categories_books_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/cart/check_out_screen.dart';
+import 'package:book_store/features/book/presentation/pages/userlogin/forgot_pass.dart';
+import 'package:book_store/features/book/presentation/pages/userlogin/login_screen.dart';
+import 'package:book_store/features/book/presentation/pages/userlogin/sign_up_screen.dart';
 
 import 'package:go_router/go_router.dart';
 
@@ -16,7 +19,10 @@ enum AppRoute {
   bottomnav,
   account,
   categoriyBooks,
-  categories
+  categories,
+  checkout,
+  address,
+  paymentSuccess
 }
 
 class AppRouter {
@@ -68,6 +74,27 @@ class AppRouter {
             bookTypeId: bookType.bookTypeId,
             bookTypeName: bookType.bookTypeName,
           );
+        },
+      ),
+      GoRoute(
+        path: '/checkout',
+        name: AppRoute.checkout.name,
+        builder: (context, state) {
+          return const CheckOutScreen();
+        },
+      ),
+      GoRoute(
+        path: '/address',
+        name: AppRoute.address.name,
+        builder: (context, state) {
+          return const AddAddressScreen();
+        },
+      ),
+      GoRoute(
+        path: '/paymentSuccess',
+        name: AppRoute.paymentSuccess.name,
+        builder: (context, state) {
+          return const PaymentSuccessScreen();
         },
       ),
     ],

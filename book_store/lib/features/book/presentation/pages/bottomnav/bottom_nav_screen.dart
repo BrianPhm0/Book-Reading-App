@@ -1,7 +1,7 @@
-import 'package:book_store/features/book/presentation/pages/cart_screen.dart';
-import 'package:book_store/features/book/presentation/pages/categories_screen.dart';
-import 'package:book_store/features/book/presentation/pages/home_screen.dart';
-import 'package:book_store/features/book/presentation/pages/library_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/cart/cart_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/categories/categories_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/userAccount/home/home_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/library/library_screen.dart';
 import 'package:book_store/features/book/presentation/pages/search_screen.dart';
 import 'package:book_store/features/book/presentation/widgets/navigation_menu.dart';
 import 'package:flutter/material.dart';
