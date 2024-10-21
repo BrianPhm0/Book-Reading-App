@@ -103,7 +103,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ],
             ),
-            Icon(
+            const Icon(
               Icons.chevron_right,
               size: 40,
             ),
