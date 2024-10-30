@@ -5,6 +5,7 @@ import 'package:book_store/features/book/presentation/pages/bottomnav/userAccoun
 import 'package:book_store/features/book/presentation/pages/bottomnav/bottom_nav_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/categories/categories_books_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/check_out_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/userAccount/changes_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/userAccount/settings_screen.dart';
 import 'package:book_store/features/book/presentation/pages/userlogin/forgot_pass.dart';
 import 'package:book_store/features/book/presentation/pages/userlogin/login_screen.dart';
@@ -24,7 +25,8 @@ enum AppRoute {
   checkout,
   address,
   paymentSuccess,
-  settings
+  settings,
+  changes
 }
 
 class AppRouter {
@@ -104,6 +106,22 @@ class AppRouter {
         name: AppRoute.settings.name,
         builder: (context, state) {
           return const SettingsScreen();
+        },
+      ),
+      GoRoute(
+        path: '/changes',
+        name: AppRoute.changes.name,
+        builder: (context, state) {
+          final args = state.extra as Map<String, dynamic>;
+          final String propertyName = args['propertyName'] ?? '';
+          final String propertyUser = args['propertyUser'] ?? '';
+          final int index = args['index'] ?? '';
+
+          return ChangesScreen(
+            propertyName: propertyName,
+            propertyUser: propertyUser,
+            index: index,
+          );
         },
       ),
     ],

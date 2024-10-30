@@ -84,30 +84,22 @@ class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
       if (firebaseUser == null) {
         throw const ServerException('User is null');
       }
+      UserModel newUser = UserModel(
+          firebaseUser.uid,
+          name,
+          '',
+          firebaseUser.email ?? "",
+          firebaseUser.phoneNumber ?? '',
+          '',
+          'user',
+          firebaseUser.photoURL ?? '');
+
       await FirebaseFirestore.instance
           .collection('users')
           .doc(firebaseUser.uid)
-          .set({
-        'id': firebaseUser.uid,
-        'userName': name,
-        'password': '',
-        'email': firebaseUser.email ?? '',
-        'phone': firebaseUser.phoneNumber ?? '',
-        'address': '',
-        'roleId': 'user', // Example role
-        'image': firebaseUser.photoURL ?? '',
-        // Add any other fields you need
-      });
+          .set(newUser.toJson());
 
-      return UserModel(
-          firebaseUser.uid,
-          name,
-          '', // Password should not be stored in plain text
-          firebaseUser.email ?? '',
-          firebaseUser.phoneNumber ?? '',
-          '', // Address if available
-          'user', // Example role
-          firebaseUser.photoURL ?? '');
+      return newUser;
     } on firebase_auth.FirebaseAuthException catch (e) {
       // Handle specific Firebase Auth exceptions
       switch (e.code) {

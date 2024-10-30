@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomeTextfield extends StatelessWidget {
-  final String name;
+  final String? name;
   final TextEditingController controller;
   final Icon? prefix;
   final IconButton? suffix;
@@ -11,7 +11,7 @@ class CustomeTextfield extends StatelessWidget {
 
   const CustomeTextfield(
       {super.key,
-      required this.name,
+      this.name,
       required this.inputType,
       this.validator,
       required this.controller,

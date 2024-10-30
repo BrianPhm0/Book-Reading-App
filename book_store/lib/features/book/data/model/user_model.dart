@@ -15,4 +15,15 @@ class UserModel extends User {
         map['roleId'] ?? '',
         map['image'] ?? '');
   }
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "userName": userName,
+        "password": password,
+        "email": email,
+        "phone": phone,
+        "address": address,
+        "roleId": roleId,
+        "image": image,
+      };
 }

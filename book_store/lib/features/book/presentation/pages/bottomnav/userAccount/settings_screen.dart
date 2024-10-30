@@ -2,12 +2,14 @@ import 'package:book_store/core/common/cubits/cubit/user_cubit.dart';
 import 'package:book_store/core/common/widgets/loader.dart';
 import 'package:book_store/features/book/business/entities/user.dart';
 import 'package:book_store/features/book/presentation/bloc/auth/auth_bloc.dart';
+import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
 import 'package:book_store/features/book/presentation/widgets/change_pass_bottom_sheet.dart';
 import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -17,6 +19,8 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  List<String> userProperties = ["Name", "Phone", "Address"];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,20 +50,56 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            textFieldSettings("Name", user.userName ?? "user", Icons.email),
+            InkWell(
+                onTap: () {
+                  context.pushNamed(
+                    AppRoute.changes.name,
+                    extra: {
+                      'propertyName': userProperties[0],
+                      'propertyUser': user.userName ?? '',
+                      'index': 0,
+                    },
+                  );
+                },
+                child: textFieldSettings(
+                    "Name", user.userName ?? "user", Icons.email)),
             const SizedBox(
               height: 20,
             ),
-            textFieldSettings("Phone", "+94-${user.phone ?? ""}", Icons.phone),
+            InkWell(
+                onTap: () {
+                  context.pushNamed(
+                    AppRoute.changes.name,
+                    extra: {
+                      'propertyName': userProperties[1],
+                      'propertyUser': user.phone ?? '',
+                      'index': 1,
+                    },
+                  );
+                },
+                child: textFieldSettings(
+                    "Phone", "+94-${user.phone ?? ""}", Icons.phone)),
             const SizedBox(
               height: 20,
             ),
-            textFieldSettings(
-                "Address",
-                user.address?.isNotEmpty == true
-                    ? user.address!
-                    : "Add your address",
-                Icons.add_home_sharp),
+            InkWell(
+              onTap: () {
+                context.pushNamed(
+                  AppRoute.changes.name,
+                  extra: {
+                    'propertyName': userProperties[2],
+                    'propertyUser': user.address ?? '',
+                    'index': 2,
+                  },
+                );
+              },
+              child: textFieldSettings(
+                  "Address",
+                  user.address?.isNotEmpty == true
+                      ? user.address!
+                      : "Add your address",
+                  Icons.add_home_sharp),
+            ),
             const SizedBox(
               height: 20,
             ),
