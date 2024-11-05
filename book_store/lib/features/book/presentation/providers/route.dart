@@ -1,6 +1,13 @@
 import 'package:book_store/features/book/business/entities/book_type.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/add_address_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/cart/cart.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/cart/detail_history_order.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/cart/detail_order_status.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/cart/manage_order.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/payment_success_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/cart/voucher_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/categories/detail_book.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/categories/user_book_args.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/userAccount/account_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/bottom_nav_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/categories/categories_books_screen.dart';
@@ -26,7 +33,13 @@ enum AppRoute {
   address,
   paymentSuccess,
   settings,
-  changes
+  changes,
+  manageOrder,
+  detailBook,
+  cart,
+  voucher,
+  detailStatus,
+  detailHistory
 }
 
 class AppRouter {
@@ -122,6 +135,50 @@ class AppRouter {
             propertyUser: propertyUser,
             index: index,
           );
+        },
+      ),
+      GoRoute(
+        path: '/manageOrder',
+        name: AppRoute.manageOrder.name,
+        builder: (context, state) {
+          return const ManageOrder();
+        },
+      ),
+      GoRoute(
+        path: '/detailBook',
+        name: AppRoute.detailBook.name,
+        builder: (context, state) {
+          final UserBookArgs args = state.extra as UserBookArgs;
+
+          return DetailBook(book: args.book, user: args.user);
+        },
+      ),
+      GoRoute(
+        path: '/cart',
+        name: AppRoute.cart.name,
+        builder: (context, state) {
+          return const Cart();
+        },
+      ),
+      GoRoute(
+        path: '/voucher',
+        name: AppRoute.voucher.name,
+        builder: (context, state) {
+          return const VoucherScreen();
+        },
+      ),
+      GoRoute(
+        path: '/history',
+        name: AppRoute.detailHistory.name,
+        builder: (context, state) {
+          return const DetailHistoryOrder();
+        },
+      ),
+      GoRoute(
+        path: '/status',
+        name: AppRoute.detailStatus.name,
+        builder: (context, state) {
+          return const DetailOrderStatus();
         },
       ),
     ],

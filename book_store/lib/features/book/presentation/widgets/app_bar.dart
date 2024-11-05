@@ -9,6 +9,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? leading;
 
   final List<Widget>? actions;
+  final PreferredSizeWidget? tabs;
 
   const CustomAppBar({
     super.key,
@@ -19,6 +20,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions,
     this.autoLeading,
     this.leading,
+    this.tabs,
   });
 
   @override
@@ -39,6 +41,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.white,
       actions: actions,
       titleTextStyle: const TextStyle(color: Colors.black),
+      bottom: tabs,
     );
   }
 

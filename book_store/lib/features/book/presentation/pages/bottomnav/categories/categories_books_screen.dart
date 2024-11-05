@@ -3,10 +3,13 @@ import 'package:book_store/core/common/widgets/loader.dart';
 import 'package:book_store/features/book/business/entities/book.dart';
 import 'package:book_store/features/book/business/entities/user.dart';
 import 'package:book_store/features/book/presentation/bloc/book/bloc/book_bloc.dart';
-import 'package:book_store/features/book/presentation/pages/bottomnav/categories/detail_book_bottom_sheet.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/cart/review_page.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/categories/user_book_args.dart';
+import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class CategoriesBooksScreen extends StatefulWidget {
   final int bookTypeId;
@@ -64,7 +67,7 @@ class _CategoriesBooksScreenState extends State<CategoriesBooksScreen> {
           User? user;
           if (authState is UserLoggedIn) {
             user = authState.user;
-            print(user);
+            // print(user);
           }
           return BlocConsumer<BookBloc, BookState>(
             listener: (context, state) {
@@ -97,8 +100,11 @@ class _CategoriesBooksScreenState extends State<CategoriesBooksScreen> {
                         index,
                         state.booksByType[index].title,
                         onTap: () {
-                          _showDetailBookSheet(
-                              context, state.booksByType[index], user!);
+                          context.pushNamed(
+                            AppRoute.detailBook.name,
+                            extra: UserBookArgs(
+                                book: state.booksByType[index], user: user!),
+                          );
                         },
                       ),
                       itemCount: state.booksByType.length,
@@ -113,19 +119,6 @@ class _CategoriesBooksScreenState extends State<CategoriesBooksScreen> {
           );
         },
       ),
-    );
-  }
-
-  void _showDetailBookSheet(BuildContext context, Book book, User user) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return DetailBookBottomSheet(
-          book: book,
-          user: user,
-        );
-      },
-      isScrollControlled: true,
     );
   }
 }

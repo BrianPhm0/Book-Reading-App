@@ -4,14 +4,14 @@ import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class CartScreen extends StatefulWidget {
-  const CartScreen({super.key});
+class Cart extends StatefulWidget {
+  const Cart({super.key});
 
   @override
-  State<CartScreen> createState() => _CartScreenState();
+  State<Cart> createState() => _CartScreenState();
 }
 
-class _CartScreenState extends State<CartScreen> {
+class _CartScreenState extends State<Cart> {
   Widget buildItem(BuildContext context, int index) {
     return Container(
       alignment: Alignment.center,
