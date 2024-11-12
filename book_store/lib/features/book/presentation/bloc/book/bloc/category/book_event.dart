@@ -23,4 +23,6 @@ final class GetItemBook extends BookEvent {
   const GetItemBook(this.bookIdType);
 }
 
+final class GetPurchaseBookEvent extends BookEvent {}
+
 final class GetLatestBookEvent extends BookEvent {}

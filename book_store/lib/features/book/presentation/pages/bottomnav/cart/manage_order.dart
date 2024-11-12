@@ -1,8 +1,6 @@
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/review_page.dart';
-import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class ManageOrder extends StatefulWidget {
   const ManageOrder({super.key});
@@ -77,7 +75,7 @@ class _ManageOrderState extends State<ManageOrder> {
   Widget buildStatus(BuildContext context, int index) {
     return GestureDetector(
       onTap: () {
-        context.pushNamed(AppRoute.detailStatus.name);
+        // context.pushNamed(AppRoute.detailStatus.name);
       },
       child: Padding(
         padding: const EdgeInsets.all(15),
@@ -108,15 +106,14 @@ class _ManageOrderState extends State<ManageOrder> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Expanded(
-                      flex: 2,
-                      child: FittedBox(
-                        child: Image.asset(
-                          'assets/book_cover/book_cover.png',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                    const SizedBox(width: 5),
+                    Image.asset(
+                      'assets/book_cover/book_cover.png',
+                      width: 80,
+                      height: 130,
+                      fit: BoxFit.cover,
                     ),
+                    const SizedBox(width: 10),
                     const Expanded(
                       flex: 3,
                       child: TextCustom(
@@ -161,7 +158,7 @@ class _ManageOrderState extends State<ManageOrder> {
   Widget buildHistory(BuildContext context, int index) {
     return GestureDetector(
       onTap: () {
-        context.pushNamed(AppRoute.detailHistory.name);
+        // context.pushNamed(AppRoute.detailHistory.name);
       },
       child: Padding(
         padding: const EdgeInsets.all(15),

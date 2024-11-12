@@ -6,10 +6,13 @@ import 'package:book_store/features/book/data/model/category/book_type_model.dar
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 abstract interface class BookRemoteDataSource {
   Future<List<BookTypeModel>> getAllBookTypes();
   Future<List<BookItemModel>> getBooksByType(int bookTypeId);
   Future<List<BookItemModel>> getLatestBook();
+  Future<List<BookItemModel>> getPurchaseEbook();
 }
 
 class BookRemoteDataSourceImpl implements BookRemoteDataSource {
@@ -46,6 +49,12 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
       // Xử lý lỗi và ném ra một ngoại lệ nếu có lỗi xảy ra
       throw ServerException('Error: ${e.toString()}');
     }
+  }
+
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token'); // Lấy token từ SharedPreferences
+    return token;
   }
 
   @override
@@ -107,6 +116,51 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
         // print(list);
 
         return list;
+      } else {
+        throw ServerException(
+            'Failed to load books with status code: ${res.statusCode}');
+      }
+    } catch (e) {
+      // print('Error: $e'); // In lỗi để debug
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<BookItemModel>> getPurchaseEbook() async {
+    final url = Uri.parse(ApiConfig.purchaseEbook);
+
+    final token = await getToken();
+
+    final headers = {'accept': '*/*', 'Authorization': 'Bearer $token'};
+
+    try {
+      final res = await http.get(url, headers: headers);
+
+      if (res.statusCode == 200) {
+        final data = json.decode(res.body);
+
+        if (data.isNotEmpty) {
+          if (data['items'] is List) {
+            final List<dynamic> items =
+                data['items']; // Lấy danh sách items từ API
+
+            List<BookItemModel> list = items.map((bookJson) {
+              return BookItemModel.fromJson(bookJson);
+            }).toList();
+            // print(items[0]);
+            // print(list[0].description);
+
+            return list;
+            // print('Book List: $list'); // In ra danh sách sách
+          } else {
+            throw Exception(
+                'API response does not contain "items" as expected.');
+          }
+        } else {
+          List<BookItemModel> data = <BookItemModel>[];
+          return data;
+        }
       } else {
         throw ServerException(
             'Failed to load books with status code: ${res.statusCode}');

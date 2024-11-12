@@ -10,4 +10,5 @@ abstract interface class BookRepository {
       {required int bookTypeId});
 
   Future<Either<Failure, List<BookItem>>> getLatestBook();
+  Future<Either<Failure, List<BookItem>>> getPurchaseEbook();
 }

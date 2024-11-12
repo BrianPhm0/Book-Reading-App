@@ -38,4 +38,16 @@ class ApiConfig {
 
   //check out with cash
   static const String payCash = '$baseUrl/Orders/checkout';
+
+  //get purchase ebook
+
+  static const String purchaseEbook =
+      '$baseUrl/Book/purchased-book?page=1&size=10';
+
+  //get detail book
+
+  static const String detailBook = '$baseUrl/Book/';
+  //get review ebook
+
+  static const String review = '$baseUrl/Review/';
 }

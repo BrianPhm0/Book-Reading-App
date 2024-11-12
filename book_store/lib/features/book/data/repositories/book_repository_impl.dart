@@ -53,4 +53,15 @@ class BookRepositoryImpl implements BookRepository {
       return left(Failure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, List<BookItem>>> getPurchaseEbook() async {
+    try {
+      final purchaseEbook = await bookRemoteDataSource.getPurchaseEbook();
+
+      return right(purchaseEbook);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
 }

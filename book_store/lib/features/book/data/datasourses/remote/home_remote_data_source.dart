@@ -34,7 +34,6 @@ class HomeRemoteDataSourceImp implements HomeRemoteDataSource {
             'Failed to load books with status code: ${res.statusCode}');
       }
     } catch (e) {
-      // print('Error: $e'); // In lỗi để debug
       throw ServerException(e.toString());
     }
   }
@@ -52,7 +51,6 @@ class HomeRemoteDataSourceImp implements HomeRemoteDataSource {
         final data = json.decode(res.body) as List<dynamic>;
 
         List<BookItemModel> list = data.map((bookJson) {
-          // print(BookItemModel.fromJson(bookJson));
           return BookItemModel.fromJson(bookJson);
         }).toList();
 

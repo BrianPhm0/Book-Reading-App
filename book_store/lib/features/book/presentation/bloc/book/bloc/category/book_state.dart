@@ -34,6 +34,12 @@ final class LatestBookSuccess extends BookState {
   const LatestBookSuccess(this.latestBook);
 }
 
+final class PurchaseBookSuccess extends BookState {
+  final List<BookItem> purchaseBook;
+
+  const PurchaseBookSuccess(this.purchaseBook);
+}
+
 final class BookItemFail extends BookState {}
 
 final class BooksByTypeSuccess extends BookState {

@@ -10,10 +10,13 @@ import 'package:book_store/features/book/business/usecases/address/save_address.
 import 'package:book_store/features/book/business/usecases/book/get_latest_book.dart';
 import 'package:book_store/features/book/business/usecases/book/get_list_book_by_type.dart';
 import 'package:book_store/features/book/business/usecases/book/get_list_book_type_usecase.dart';
+import 'package:book_store/features/book/business/usecases/book/get_purchase_book.dart';
 import 'package:book_store/features/book/business/usecases/cart/delete_cart.dart';
 import 'package:book_store/features/book/business/usecases/cart/get_cart.dart';
 import 'package:book_store/features/book/business/usecases/cart/post_cart_item.dart';
 import 'package:book_store/features/book/business/usecases/check/pay_cash.dart';
+import 'package:book_store/features/book/business/usecases/detail/get_detail.dart';
+import 'package:book_store/features/book/business/usecases/detail/get_review.dart';
 import 'package:book_store/features/book/business/usecases/home/best_deal.dart';
 import 'package:book_store/features/book/business/usecases/home/latest_book.dart';
 import 'package:book_store/features/book/business/usecases/home/top_book.dart';
@@ -32,12 +35,15 @@ import 'package:book_store/features/book/data/datasourses/remote/auth_remote_dat
 import 'package:book_store/features/book/data/datasourses/remote/book_remote_data_source.dart';
 import 'package:book_store/features/book/data/datasourses/remote/cart_remote_data_source.dart';
 import 'package:book_store/features/book/data/datasourses/remote/check_data.dart';
+import 'package:book_store/features/book/data/datasourses/remote/detail_data.dart';
 import 'package:book_store/features/book/data/datasourses/remote/home_remote_data_source.dart';
 import 'package:book_store/features/book/data/repositories/address_repository_impl.dart';
 import 'package:book_store/features/book/data/repositories/auth_repository_impl.dart';
 import 'package:book_store/features/book/data/repositories/book_repository_impl.dart';
 import 'package:book_store/features/book/data/repositories/cart_repository_impl.dart';
 import 'package:book_store/features/book/data/repositories/check_repository_impl.dart';
+import 'package:book_store/features/book/data/repositories/detail_repository.dart';
+import 'package:book_store/features/book/data/repositories/detail_repository_impl.dart';
 import 'package:book_store/features/book/data/repositories/home_repository_impl.dart';
 import 'package:book_store/features/book/presentation/bloc/address/address_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/auth/auth_bloc.dart';
@@ -45,6 +51,7 @@ import 'package:book_store/features/book/presentation/bloc/book/bloc/category/bo
 import 'package:book_store/features/book/presentation/bloc/book/bloc/home/home_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/cart/bloc/cart_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/check/check_bloc.dart';
+import 'package:book_store/features/book/presentation/bloc/detail/detail_bloc.dart';
 import 'package:book_store/firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -71,6 +78,7 @@ Future<void> initDependencies() async {
   _initCart();
   _initAddress();
   _initCheck();
+  _initDetail();
 }
 
 void _initAuth() {
@@ -125,11 +133,13 @@ void _initBook() {
         () => GetListBookTypeUsecase(serviceLocator()))
     ..registerFactory<GetListBooksByType>(
         () => GetListBooksByType(serviceLocator()))
+    ..registerFactory<GetPurchaseBook>(() => GetPurchaseBook(serviceLocator()))
     ..registerFactory<GetLatestBook>(() => GetLatestBook(serviceLocator()))
     ..registerLazySingleton<BookBloc>(() => BookBloc(
         bookTypeUsecase: serviceLocator(),
         booksByType: serviceLocator(),
-        latestBook: serviceLocator()));
+        latestBook: serviceLocator(),
+        purchaseBook: serviceLocator()));
 }
 
 void _initHome() {
@@ -180,4 +190,16 @@ void _initCheck() {
     // ..registerFactory<GetAddress>(() => GetAddress(serviceLocator()))
     ..registerLazySingleton<CheckBloc>(
         () => CheckBloc(payCash: serviceLocator()));
+}
+
+void _initDetail() {
+  serviceLocator
+    ..registerFactory<DetailData>(() => DetailDataImpl())
+    ..registerFactory<DetailRepository>(
+        () => DetailRepositoryImpl(serviceLocator()))
+    ..registerFactory<GetDetail>(() => GetDetail(serviceLocator()))
+    ..registerFactory<GetReview>(() => GetReview(serviceLocator()))
+    // ..registerFactory<GetAddress>(() => GetAddress(serviceLocator()))
+    ..registerLazySingleton<DetailBloc>(() =>
+        DetailBloc(getDetail: serviceLocator(), getReview: serviceLocator()));
 }

@@ -1,7 +1,10 @@
+import 'package:book_store/core/common/widgets/loader.dart';
 import 'package:book_store/features/book/business/entities/book_by_category/book_item.dart';
+import 'package:book_store/features/book/business/entities/review/review.dart';
 import 'package:book_store/features/book/business/entities/user/user.dart';
 import 'package:book_store/features/book/presentation/bloc/book/bloc/home/home_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/cart/bloc/cart_bloc.dart';
+import 'package:book_store/features/book/presentation/bloc/detail/detail_bloc.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
 import 'package:book_store/features/book/presentation/widgets/custom_button.dart';
@@ -25,6 +28,13 @@ class DetailBook extends StatefulWidget {
 
 class _DetailBookState extends State<DetailBook> {
   @override
+  void initState() {
+    super.initState();
+    // Chỉ gọi sự kiện để lấy loại sách khi cây widget đã được xây dựng
+    context.read<DetailBloc>().add(GetDetailEvent(widget.book.bookId));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -38,175 +48,212 @@ class _DetailBookState extends State<DetailBook> {
           },
         ),
       ),
-      body: SafeArea(
-          child: DefaultTabController(
-        length: 2,
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      TextCustom(
-                        text: widget.book.title,
-                        fontSize: 30,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      const SizedBox(height: 15),
-                      Row(
-                        children: [
-                          Flexible(
-                            flex: 4,
-                            child: Image.network(
-                              widget.book.image,
-                              fit: BoxFit.cover,
+      body: BlocConsumer<DetailBloc, DetailState>(
+        listener: (context, state) {
+          if (state is DetailFailure) {
+            // Hiển thị thông báo lỗi nếu có
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: TextCustom(
+                      text: state.toString(),
+                      fontSize: 20,
+                      color: Colors.white)),
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is DetailLoading) {
+            return const Center(child: Loader(size: 50.0, color: Colors.black));
+          } else if (state is DetailSuccess) {
+            final detail = state.detailBook;
+            final review = state.review;
+            return SafeArea(
+                child: DefaultTabController(
+              length: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            TextCustom(
+                              text: detail.title,
+                              fontSize: 30,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          Flexible(
-                            flex: 5,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            const SizedBox(height: 15),
+                            Row(
                               children: [
-                                TextCustom(
-                                  text: 'Author: ${widget.book.authorName}',
-                                  fontSize: 25,
-                                  color: Colors.black,
-                                ),
-                                TextCustom(
-                                  text: 'Category: ${widget.brandName ?? ''}',
-                                  fontSize: 25,
-                                  color: Colors.black,
-                                ),
-                                TextCustom(
-                                  text: 'Rating: ${widget.book.rating}/5',
-                                  fontSize: 25,
-                                  color: Colors.black,
-                                ),
-                                FittedBox(
-                                  child: TextCustom(
-                                    text:
-                                        'Pricing: ${widget.book.price.toString()} VND',
-                                    fontSize: 25,
-                                    color: Colors.black,
+                                Flexible(
+                                  flex: 4,
+                                  child: Image.network(
+                                    detail.image,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
-                                CustomButton(
-                                  rectangle: 5,
-                                  size: 25,
-                                  name: 'Ebook',
-                                  onPressed: () {
-                                    _showAlertDialog(context);
-                                  },
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                CustomButton(
-                                  rectangle: 5,
-                                  size: 25,
-                                  backgroundColor: Colors.white,
-                                  textColor: Colors.black,
-                                  name: 'HardCover',
-                                  onPressed: () {
-                                    _showBottomDialog(context, widget.book);
-                                  },
+                                const SizedBox(width: 10),
+                                Flexible(
+                                  flex: 5,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      TextCustom(
+                                        text: 'Author: ${detail.author}',
+                                        fontSize: 19,
+                                        color: Colors.black,
+                                        maxLines: 2,
+                                      ),
+                                      TextCustom(
+                                        text:
+                                            'Category: ${detail.brandNames?.join(', ') ?? ''}',
+                                        fontSize: 19,
+                                        maxLines: 2,
+                                        color: Colors.black,
+                                      ),
+                                      TextCustom(
+                                        text: 'Rating: ${detail.rating}/5',
+                                        fontSize: 19,
+                                        color: Colors.black,
+                                      ),
+                                      FittedBox(
+                                        child: TextCustom(
+                                          text:
+                                              'Pricing: ${detail.price.toString()} VND',
+                                          fontSize: 20,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      CustomButton(
+                                        rectangle: 5,
+                                        size: 20,
+                                        name: 'Ebook',
+                                        onPressed: () {
+                                          _showAlertDialog(context);
+                                        },
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      CustomButton(
+                                        rectangle: 5,
+                                        size: 20,
+                                        backgroundColor: Colors.white,
+                                        textColor: Colors.black,
+                                        name: 'HardCover',
+                                        onPressed: () {
+                                          _showBottomDialog(context, detail);
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      const TabBar(
-                          indicatorColor: Colors.black,
-                          labelColor: Colors.black,
-                          unselectedLabelColor: Colors.grey,
-                          labelStyle: TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'Schyler',
-                              fontWeight: FontWeight.bold),
-                          tabs: [
-                            Tab(text: 'Description'),
-                            Tab(text: 'Reviews'),
-                          ]),
-                      SizedBox(
-                        height: 600,
-                        child: TabBarView(children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 15),
-                            child: SingleChildScrollView(
-                              child: TextCustom(
-                                text: widget.book.description,
-                                fontSize: 20,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                          ListView.separated(
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                    leading: const Icon(
-                                      Icons.account_circle,
-                                      size: 55,
+                            const SizedBox(height: 20),
+                            const TabBar(
+                                indicatorColor: Colors.black,
+                                labelColor: Colors.black,
+                                unselectedLabelColor: Colors.grey,
+                                labelStyle: TextStyle(
+                                    fontSize: 20,
+                                    fontFamily: 'Schyler',
+                                    fontWeight: FontWeight.bold),
+                                tabs: [
+                                  Tab(text: 'Description'),
+                                  Tab(text: 'Reviews'),
+                                ]),
+                            SizedBox(
+                              height: 600,
+                              child: TabBarView(children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 15),
+                                  child: SingleChildScrollView(
+                                    child: TextCustom(
+                                      text: detail.description ?? '',
+                                      fontSize: 20,
+                                      color: Colors.black,
                                     ),
-                                    title: const TextCustom(
-                                        text: "PhamDuc",
-                                        fontSize: 20,
-                                        color: Colors.black),
-                                    subtitle: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        RatingBar.builder(
-                                          initialRating: 3,
-                                          minRating: 1,
-                                          direction: Axis.horizontal,
-                                          allowHalfRating: true,
-                                          itemCount: 5,
-                                          itemSize: 20,
-                                          itemPadding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 1.0),
-                                          itemBuilder: (context, _) =>
-                                              const Icon(
-                                            Icons.star,
+                                  ),
+                                ),
+                                review.isEmpty
+                                    ? Align(
+                                        alignment: Alignment.topCenter,
+                                        child: Container(
+                                          padding:
+                                              const EdgeInsets.only(top: 50),
+                                          child: const TextCustom(
+                                            text: 'No reviews yet',
+                                            fontSize: 25,
                                             color: Colors.black,
                                           ),
-                                          onRatingUpdate: (rating) {
-                                            print(rating);
-                                          },
                                         ),
-                                        const TextCustom(
-                                            text:
-                                                "good very very very good hahahaaa",
-                                            fontSize: 18,
-                                            color: Colors.black),
-                                      ],
-                                    ));
-                              },
-                              separatorBuilder: (context, index) {
-                                return const Divider();
-                              },
-                              itemCount: 10)
-                        ]),
+                                      )
+                                    : ListView.separated(
+                                        itemBuilder: (context, index) {
+                                          return _buildReview(
+                                              context, index, review[index]);
+                                        },
+                                        separatorBuilder: (context, index) {
+                                          return const Divider();
+                                        },
+                                        itemCount: review.length)
+                              ]),
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
-        ),
-      )),
+              ),
+            ));
+          }
+          return Center(
+            child: Text('Unknown state: ${state.toString()}'),
+          );
+        },
+      ),
     );
+  }
+
+  ListTile _buildReview(BuildContext context, int index, Review review) {
+    return ListTile(
+        leading: const Icon(
+          Icons.account_circle,
+          size: 55,
+        ),
+        title:
+            TextCustom(text: review.email, fontSize: 20, color: Colors.black),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RatingBar.builder(
+              initialRating: review.rating,
+              minRating: 1,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemSize: 20,
+              itemPadding: const EdgeInsets.symmetric(horizontal: 1.0),
+              itemBuilder: (context, _) => const Icon(
+                Icons.star,
+                color: Colors.black,
+              ),
+              onRatingUpdate: (rating) {
+                print(rating);
+              },
+            ),
+            TextCustom(text: review.comment, fontSize: 18, color: Colors.black),
+          ],
+        ));
   }
 
   void _showAlertDialog(BuildContext context) {

@@ -47,7 +47,7 @@ class CheckDataImpl implements CheckData {
 
       // Check the response status
       if (res.statusCode == 200) {
-        final data = json.decode(res.body);
+        json.decode(res.body);
       } else {
         // If the status code is not 200, throw an exception
         throw Exception('Failed to load data. Status code: ${res.statusCode}');

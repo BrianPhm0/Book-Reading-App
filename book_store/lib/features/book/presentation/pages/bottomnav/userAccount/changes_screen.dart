@@ -70,14 +70,14 @@ class _ChangesScreenState extends State<ChangesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(title: widget.propertyName ?? "Change"),
+      appBar: CustomAppBar(title: widget.propertyName),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextCustom(
-                text: widget.propertyName ?? "Change",
+                text: widget.propertyName,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.black),

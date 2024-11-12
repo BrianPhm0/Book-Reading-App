@@ -8,6 +8,7 @@ import 'package:book_store/features/book/presentation/pages/bottomnav/cart/payme
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/voucher_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/categories/detail_book.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/categories/user_book_args.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/library/reading_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/userAccount/account_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/bottom_nav_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/categories/categories_books_screen.dart';
@@ -39,7 +40,8 @@ enum AppRoute {
   cart,
   voucher,
   detailStatus,
-  detailHistory
+  detailHistory,
+  readingBook
 }
 
 class AppRouter {
@@ -183,6 +185,14 @@ class AppRouter {
         name: AppRoute.detailStatus.name,
         builder: (context, state) {
           return const DetailOrderStatus();
+        },
+      ),
+      GoRoute(
+        path: '/reading',
+        name: AppRoute.readingBook.name, // Ensure this matches exactly
+        builder: (context, state) {
+          final args = state.extra as String;
+          return ReadingBook(pdfPath: args);
         },
       ),
     ],
