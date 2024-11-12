@@ -1,5 +1,5 @@
 import 'package:book_store/core/error/failure.dart';
-import 'package:book_store/features/book/business/entities/user.dart';
+import 'package:book_store/features/book/business/entities/user/user.dart';
 import 'package:fpdart/fpdart.dart';
 
 //define abstract method
@@ -17,10 +17,18 @@ abstract interface class AuthRepository {
   });
 
   Future<Either<Failure, User>> getCurrentUser();
+  Future<Either<Failure, User>> getUser();
+
+  Future<Either<Failure, String>> getToken();
 
   Future<Either<Failure, void>> resetPassword({
     required String email,
   });
 
   Future<Either<Failure, void>> signOut();
+
+  Future<Either<Failure, String>> logInWithNamePassword({
+    required String name,
+    required String password,
+  });
 }

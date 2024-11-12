@@ -1,8 +1,8 @@
 import 'package:book_store/core/error/exceptions.dart';
 import 'package:book_store/core/error/failure.dart';
-import 'package:book_store/features/book/business/entities/user.dart';
+import 'package:book_store/features/book/business/entities/user/user.dart';
 import 'package:book_store/features/book/business/repositories/auth_repository.dart';
-import 'package:book_store/features/book/data/datasourses/auth_remote_data_source.dart';
+import 'package:book_store/features/book/data/datasourses/remote/auth_remote_data_source.dart';
 
 import 'package:fpdart/src/either.dart';
 
@@ -41,6 +41,20 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (e) {
       // Handle any other exceptions and return a general Failure
       return left(Failure('Failed to sign up'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> logInWithNamePassword(
+      {required String name, required String password}) async {
+    try {
+      final token = await remoteDataSource.loginWithNamePassword(
+          name: name, password: password);
+      return right(token);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    } catch (e) {
+      return left(Failure('Failed to login'));
     }
   }
 
@@ -87,10 +101,36 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, String>> getToken() async {
+    try {
+      final token = await remoteDataSource.getToken();
+      if (token == null) {
+        return left(Failure('User are not logged in!'));
+      }
+      return right(token);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> signOut() async {
     try {
       await remoteDataSource.signOut();
       return right(null);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, User>> getUser() async {
+    try {
+      final user = await remoteDataSource.getUser();
+      if (user == null) {
+        return left(Failure('User are not logged in!'));
+      }
+      return right(user);
     } on ServerException catch (e) {
       return left(Failure(e.message));
     }

@@ -1,3 +1,7 @@
+import 'package:book_store/core/common/widgets/loader.dart';
+import 'package:book_store/core/utils/show_snackbar.dart';
+import 'package:book_store/features/book/business/entities/address/address.dart';
+import 'package:book_store/features/book/presentation/bloc/check/check_bloc.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/address_bottom_sheet.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/payment_bottom_sheet.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
@@ -5,6 +9,7 @@ import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
 import 'package:book_store/features/book/presentation/widgets/custom_button.dart';
 import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class CheckOutScreen extends StatefulWidget {
@@ -15,16 +20,37 @@ class CheckOutScreen extends StatefulWidget {
 }
 
 class _CheckOutScreenState extends State<CheckOutScreen> {
-  List<String> payment = ['Momo', 'Paypal', 'Cash'];
-
+  List<String> payment = ['Cash', 'Paypal', 'Momo'];
+  Address? addressDefault; // Store selected address
   int selectedPayment = 0;
+  int selectedAddressIndex = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<CheckBloc>().add(ResetCheckEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const CustomAppBar(title: "Checkout"),
-      body: SafeArea(
-          child: Padding(
+      body: BlocConsumer<CheckBloc, CheckState>(
+        listener: (context, state) {
+          if (state is CheckFailure) {
+            showSnackBar(context, 'Fail to purchase');
+          }
+        },
+        builder: (context, state) {
+          if (state is CheckLoading) {
+            return const Center(child: Loader(size: 50.0, color: Colors.black));
+          } else if (state is CheckSuccess) {
+            context.read<CheckBloc>().add(ResetCheckEvent());
+            context.goNamed(AppRoute.paymentSuccess.name);
+          }
+          return SafeArea(
+            child: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
@@ -38,9 +64,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SizedBox(height: 20),
                         Container(
                           width: double.infinity,
                           height: 120,
@@ -53,7 +77,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Flexible(
+                                Flexible(
                                   flex: 2,
                                   child: Column(
                                     crossAxisAlignment:
@@ -62,7 +86,9 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                     children: [
                                       FittedBox(
                                         child: TextCustom(
-                                          text: "Pham | 0965323955",
+                                          text: addressDefault != null
+                                              ? "${addressDefault!.name} | ${addressDefault?.phone}"
+                                              : "Name | Phone",
                                           fontSize: 20,
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -70,10 +96,11 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                       ),
                                       FittedBox(
                                         child: TextCustom(
-                                            text:
-                                                "Tan Tao A, Binh Tan, Tp. HCM",
-                                            fontSize: 22,
-                                            color: Colors.white),
+                                          text: addressDefault?.address ??
+                                              "Your address",
+                                          fontSize: 22,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -81,11 +108,11 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                 Flexible(
                                   flex: 1,
                                   child: InkWell(
-                                    onTap: () {
-                                      _showAddressOption(context);
-                                    },
-                                    child: const TextCustom(
-                                      text: "Change",
+                                    onTap: () => _showAddressOption(context),
+                                    child: TextCustom(
+                                      text: addressDefault != null
+                                          ? "Change"
+                                          : "Choose",
                                       fontSize: 20,
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
@@ -96,15 +123,13 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SizedBox(height: 20),
                         Container(
                           height: 120,
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border:
-                                  Border.all(color: Colors.black, width: 2)),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.black, width: 2),
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.all(10),
                             child: Column(
@@ -115,20 +140,19 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     const TextCustom(
-                                        text: "Payment Method",
-                                        fontSize: 25,
-                                        color: Colors.black),
+                                      text: "Payment Method",
+                                      fontSize: 25,
+                                      color: Colors.black,
+                                    ),
                                     InkWell(
-                                      onTap: () {
-                                        _showPayment(context);
-                                      },
+                                      onTap: () => _showPayment(context),
                                       child: const TextCustom(
                                         text: "Change",
                                         fontSize: 20,
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                                 Container(
@@ -140,23 +164,21 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                                   padding: const EdgeInsets.only(left: 20),
                                   child: Row(
                                     children: [
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
+                                      const SizedBox(width: 10),
                                       SizedBox(
-                                          width:
-                                              30, // Adjust the width as needed
-                                          height: 30,
-                                          child: Image.asset(
-                                              fit: BoxFit.contain,
-                                              "assets/payment/payment${selectedPayment + 1}.png")),
-                                      const SizedBox(
-                                        width: 10,
+                                        width: 30,
+                                        height: 30,
+                                        child: Image.asset(
+                                          fit: BoxFit.contain,
+                                          "assets/payment/payment${selectedPayment + 1}.png",
+                                        ),
                                       ),
+                                      const SizedBox(width: 10),
                                       TextCustom(
-                                          text: payment[selectedPayment],
-                                          fontSize: 30,
-                                          color: Colors.black),
+                                        text: payment[selectedPayment],
+                                        fontSize: 30,
+                                        color: Colors.black,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -165,44 +187,69 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
                       ],
                     ),
                   ),
                   SizedBox(
-                      height: 50,
-                      width: double.infinity,
-                      child: CustomButton(
-                        name: "Pay \$60",
-                        onPressed: () {
-                          context.goNamed(AppRoute.paymentSuccess.name);
-                        },
-                        size: 20,
-                        rectangle: 5,
-                      )),
+                    height: 50,
+                    width: double.infinity,
+                    child: CustomButton(
+                      name: "Pay",
+                      onPressed: () {
+                        if (addressDefault?.name != null) {
+                          context.read<CheckBloc>().add(PayCashEvent(
+                              addressDefault!.name,
+                              addressDefault!.phone,
+                              addressDefault!.address));
+                        } else {
+                          showSnackBar(context, 'Please choose your address');
+                        }
+                      },
+                      size: 20,
+                      rectangle: 5,
+                    ),
+                  ),
                 ],
-              ))),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
-  void _showAddressOption(BuildContext context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return const AddressBottomSheet();
-        });
+  void _showAddressOption(BuildContext context) async {
+    final result = await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return AddressBottomSheet(
+          initialSelectedAddress: addressDefault,
+          onAddressSelected: (selectedAddress, index) {
+            Navigator.pop(
+                context, {'address': selectedAddress, 'index': index});
+          },
+        );
+      },
+    );
+
+    if (result != null) {
+      setState(() {
+        addressDefault = result['address'] as Address; // Cập nhật địa chỉ
+        selectedAddressIndex = result['index'] as int; // Cập nhật chỉ mục
+      });
+    }
   }
 
   void _showPayment(BuildContext context) async {
     final result = await showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return PaymentBottomSheet(
-            selectedPayment: selectedPayment,
-          );
-        });
+      context: context,
+      builder: (BuildContext context) {
+        return PaymentBottomSheet(
+          selectedPayment: selectedPayment,
+        );
+      },
+    );
     if (result != null) {
       setState(() {
         selectedPayment = result;

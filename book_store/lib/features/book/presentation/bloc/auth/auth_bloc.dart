@@ -1,12 +1,15 @@
 // ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:book_store/core/common/cubits/cubit/user_cubit.dart';
-import 'package:book_store/features/book/business/entities/user.dart';
-import 'package:book_store/features/book/business/usecases/user_current.dart';
-import 'package:book_store/features/book/business/usecases/user_forget_pass.dart';
-import 'package:book_store/features/book/business/usecases/user_login.dart';
-import 'package:book_store/features/book/business/usecases/user_sign_out.dart';
-import 'package:book_store/features/book/business/usecases/user_sign_up.dart';
+import 'package:book_store/features/book/business/entities/user/user.dart';
+import 'package:book_store/features/book/business/usecases/user/user_current.dart';
+import 'package:book_store/features/book/business/usecases/user/user_forget_pass.dart';
+import 'package:book_store/features/book/business/usecases/user/user_get_user.dart';
+import 'package:book_store/features/book/business/usecases/user/user_login.dart';
+import 'package:book_store/features/book/business/usecases/user/user_login_jwt.dart';
+import 'package:book_store/features/book/business/usecases/user/user_sign_out.dart';
+import 'package:book_store/features/book/business/usecases/user/user_sign_up.dart';
+import 'package:book_store/features/book/business/usecases/user/user_token_current.dart';
 import 'package:equatable/equatable.dart';
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -19,20 +22,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserSignOut _userSignOut;
   final CurrentUser _currentUser;
   final UserCubit _userCubit;
+  final UserLoginJwt _userLoginJwt;
+  final UserTokenCurrent _tokenCurrent;
+  final GetUser _getUser;
   //handle the use case
-  AuthBloc({
-    required UserSignUp userSignUp,
-    required UserLogin userLogin,
-    required UserForgetPass userForgetPass,
-    required UserSignOut userSignOut,
-    required CurrentUser currentUser,
-    required UserCubit userCubit,
-  })  : _userSignUp = userSignUp,
+  AuthBloc(
+      {required UserSignUp userSignUp,
+      required UserLogin userLogin,
+      required UserForgetPass userForgetPass,
+      required UserSignOut userSignOut,
+      required CurrentUser currentUser,
+      required UserCubit userCubit,
+      required UserTokenCurrent tokenCurrent,
+      required GetUser getUser,
+      required UserLoginJwt userLoginJwt})
+      : _userSignUp = userSignUp,
         _userLogin = userLogin,
         _userForgetPass = userForgetPass,
         _userSignOut = userSignOut,
         _currentUser = currentUser,
         _userCubit = userCubit,
+        _userLoginJwt = userLoginJwt,
+        _tokenCurrent = tokenCurrent,
+        _getUser = getUser,
         super(AuthInitial()) {
     on<AuthEvent>((_, emit) => emit(AuthLoading()));
     on<AuthSignUp>(_onAuthSignUp);
@@ -40,6 +52,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthResetPass>(_onAuthResetPass);
     on<AuthIsUserLoggedIn>(_onAuthCurrentUser);
     on<AuthUserSignOut>(_onUserSignOut);
+    on<AuthIsTokendIn>(_onAuthTokenUser);
+    on<AuthLoginToken>(_onUserLoginJwt);
+    on<AuthGetUser>(_onAuthGetUser);
   }
 
   void _onAuthSignUp(AuthSignUp event, Emitter<AuthState> emit) async {
@@ -81,6 +96,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
   }
 
+  void _onAuthTokenUser(AuthIsTokendIn event, Emitter<AuthState> emit) async {
+    final res = await _tokenCurrent(NoTokenParams());
+    res.fold((l) => emit(const AuthFailure()), (r) {
+      _userCubit.updateToken(r);
+      emit(AuthTokenSuccess(r));
+    });
+  }
+
+  void _onAuthGetUser(AuthGetUser event, Emitter<AuthState> emit) async {
+    final res = await _getUser(GetUserParams());
+    res.fold((l) => emit(const AuthFailure()), (r) {
+      _emitAuthSuccess(r, emit);
+    });
+  }
+
   void _emitAuthSuccess(User user, Emitter<AuthState> emit) {
     _userCubit.updateUser(user);
     emit(AuthSuccess(user));
@@ -93,5 +123,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       _userCubit.updateUser(null);
       emit(AuthSignOutSuccess());
     });
+  }
+
+  void _onUserLoginJwt(AuthLoginToken event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    final res = await _userLoginJwt(
+        UserLoginJwtParams(name: event.name, password: event.password));
+    res.fold((failure) => emit(AuthFailure(failure.message)),
+        (r) => emit(AuthTokenSuccess(r)));
   }
 }

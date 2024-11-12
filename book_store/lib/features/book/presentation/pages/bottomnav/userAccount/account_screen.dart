@@ -1,6 +1,5 @@
-import 'package:book_store/core/common/cubits/cubit/user_cubit.dart';
 import 'package:book_store/core/common/widgets/loader.dart';
-import 'package:book_store/features/book/business/entities/user.dart';
+import 'package:book_store/features/book/business/entities/user/user.dart';
 import 'package:book_store/features/book/presentation/bloc/auth/auth_bloc.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
@@ -46,10 +45,12 @@ class _AccountScreenState extends State<AccountScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: BlocBuilder<UserCubit, UserState>(
+          child: BlocBuilder<AuthBloc, AuthState>(
             builder: (context, userState) {
-              if (userState is UserLoggedIn) {
+              if (userState is AuthSuccess) {
                 final user = userState.user;
+                // print(user);
+
                 return _buildAccountContent(context, user);
               } else if (userState is AuthLoading) {
                 return const Loader();
@@ -72,7 +73,7 @@ class _AccountScreenState extends State<AccountScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _buildInfoUser(context, user.userName ?? 'User', user.email),
+          _buildInfoUser(context, user.username ?? 'User', user.email),
           const SizedBox(height: 30),
           _buildInfoTile(context, 'Notifications'),
           const SizedBox(height: 30),

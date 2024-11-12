@@ -1,17 +1,23 @@
-import 'package:book_store/features/book/business/entities/book.dart';
-import 'package:book_store/features/book/business/entities/user.dart';
+import 'package:book_store/features/book/business/entities/book_by_category/book_item.dart';
+import 'package:book_store/features/book/business/entities/user/user.dart';
+import 'package:book_store/features/book/presentation/bloc/book/bloc/home/home_bloc.dart';
+import 'package:book_store/features/book/presentation/bloc/cart/bloc/cart_bloc.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
 import 'package:book_store/features/book/presentation/widgets/custom_button.dart';
 import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_router/go_router.dart';
 
 class DetailBook extends StatefulWidget {
-  final Book book;
+  final BookItem book;
   final User? user;
-  const DetailBook({super.key, required this.book, this.user});
+  final String? brandName;
+  // final BookDetail? bookDetail;
+
+  const DetailBook({super.key, required this.book, this.user, this.brandName});
 
   @override
   State<DetailBook> createState() => _DetailBookState();
@@ -22,7 +28,16 @@ class _DetailBookState extends State<DetailBook> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const CustomAppBar(title: "Book Detail"),
+      appBar: CustomAppBar(
+        title: "Book Detail",
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            context.read<HomeBloc>().add(GetHomeBookEvent());
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
       body: SafeArea(
           child: DefaultTabController(
         length: 2,
@@ -47,8 +62,8 @@ class _DetailBookState extends State<DetailBook> {
                         children: [
                           Flexible(
                             flex: 4,
-                            child: Image.asset(
-                              'assets/book_cover/book_cover.png',
+                            child: Image.network(
+                              widget.book.image,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -60,27 +75,28 @@ class _DetailBookState extends State<DetailBook> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                const TextCustom(
-                                  text: 'Author: Black',
-                                  fontSize: 25,
-                                  color: Colors.black,
-                                ),
-                                const TextCustom(
-                                  text: 'Category: Hornor',
+                                TextCustom(
+                                  text: 'Author: ${widget.book.authorName}',
                                   fontSize: 25,
                                   color: Colors.black,
                                 ),
                                 TextCustom(
-                                  text:
-                                      'Rating: ${widget.book.rating.toString()}/5',
+                                  text: 'Category: ${widget.brandName ?? ''}',
                                   fontSize: 25,
                                   color: Colors.black,
                                 ),
                                 TextCustom(
-                                  text:
-                                      'Pricing: \$${widget.book.price.toString()}',
+                                  text: 'Rating: ${widget.book.rating}/5',
                                   fontSize: 25,
                                   color: Colors.black,
+                                ),
+                                FittedBox(
+                                  child: TextCustom(
+                                    text:
+                                        'Pricing: ${widget.book.price.toString()} VND',
+                                    fontSize: 25,
+                                    color: Colors.black,
+                                  ),
                                 ),
                                 CustomButton(
                                   rectangle: 5,
@@ -210,7 +226,7 @@ class _DetailBookState extends State<DetailBook> {
                 color: Colors.black),
             content: TextCustom(
                 text:
-                    "Are you sure you want to buy this Ebook for \$${widget.book.price}?",
+                    "Are you sure you want to buy this Ebook for ${widget.book.price} VND?",
                 fontSize: 20,
                 color: Colors.black),
             actions: [
@@ -232,7 +248,7 @@ class _DetailBookState extends State<DetailBook> {
         });
   }
 
-  void _showBottomDialog(BuildContext context, Book book) {
+  void _showBottomDialog(BuildContext context, BookItem book) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -243,7 +259,7 @@ class _DetailBookState extends State<DetailBook> {
 }
 
 class QuantitySelector extends StatefulWidget {
-  final Book book;
+  final BookItem book;
   const QuantitySelector({super.key, required this.book});
 
   @override
@@ -254,190 +270,219 @@ class _QuantitySelectorState extends State<QuantitySelector> {
   int quantity = 1;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 450,
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(12),
-          topRight: Radius.circular(12),
+    return BlocListener<CartBloc, CartState>(
+      listener: (context, state) {
+        if (state is PostCartSuccess) {
+          if (state.result.isNotEmpty) {}
+        } else if (state is CartFailure) {
+          // Hiển thị lỗi nếu thêm thất bại
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: TextCustom(
+                    text: 'Fail to add', fontSize: 20, color: Colors.white)),
+          );
+        }
+      },
+      child: Container(
+        height: 400,
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12),
+            topRight: Radius.circular(12),
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Flexible(
-                flex: 3,
-                child: Image.asset(
-                  'assets/book_cover/book_cover.png',
-                  fit: BoxFit.cover,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Flexible(
+                  flex: 3,
+                  child: Image.network(
+                    widget.book.image,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              Flexible(
-                flex: 5,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextCustom(
-                        text: "\$${widget.book.price}",
-                        fontSize: 25,
-                        color: Colors.black),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    const TextCustom(
-                        text: "Inventory: 120",
-                        fontSize: 20,
-                        color: Colors.black),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                  ],
+                const SizedBox(
+                  width: 20,
                 ),
-              ),
-            ],
-          ),
-          TextCustom(
-            text: widget.book.title,
-            fontSize: 25,
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity, // Chiều rộng bằng màn hình
-            child: Column(children: [
-              Container(
-                color: Colors.grey,
-                height: 1,
-              ),
-              SizedBox(
-                height: 50,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                Flexible(
+                  flex: 5,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Row(
-                        children: [
-                          Icon(Icons.book),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          TextCustom(
-                              text: "Quantity",
-                              fontSize: 20,
-                              color: Colors.black),
-                        ],
+                      FittedBox(
+                        child: TextCustom(
+                            text: "Pricing: ${widget.book.price} VND",
+                            fontSize: 25,
+                            color: Colors.black),
                       ),
-                      Row(children: [
-                        IconButton(
-                          icon: const Icon(Icons.remove, color: Colors.black),
-                          onPressed: () {
-                            setState(() {
-                              if (quantity > 0) quantity--;
-                              if (quantity == 0) {
-                                Navigator.of(context).pop();
-                              }
-                            });
-                          },
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        TextCustom(
-                          text: "$quantity",
-                          color: Colors.black,
-                          fontSize: 25,
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.add, color: Colors.black),
-                          onPressed: () {
-                            setState(() {
-                              quantity++;
-                            });
-                          },
-                        )
-                      ]),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      TextCustom(
+                          text: "Inventory: ${widget.book.quantity}",
+                          fontSize: 20,
+                          color: Colors.black),
+                      const SizedBox(
+                        height: 15,
+                      ),
                     ],
                   ),
                 ),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border:
-                                Border.all(color: Colors.black, width: 2.0)),
-                        child: const SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: Center(
-                            // Thêm Center để căn giữa
-                            child: TextCustom(
-                              text: "Add To Cart",
-                              fontSize: 25,
-                              color: Colors.black,
+              ],
+            ),
+            TextCustom(
+              text: widget.book.title,
+              fontSize: 25,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity, // Chiều rộng bằng màn hình
+              child: Column(children: [
+                Container(
+                  color: Colors.grey,
+                  height: 1,
+                ),
+                SizedBox(
+                  height: 50,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(Icons.book),
+                            SizedBox(
+                              width: 10,
                             ),
-                          ),
+                            TextCustom(
+                                text: "Quantity",
+                                fontSize: 20,
+                                color: Colors.black),
+                          ],
                         ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 15,
-                  ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        context.pushNamed(AppRoute.cart.name);
-                        Navigator.of(context).pop();
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
+                        Row(children: [
+                          IconButton(
+                            icon: const Icon(Icons.remove, color: Colors.black),
+                            onPressed: () {
+                              setState(() {
+                                if (quantity > 0) quantity--;
+                                if (quantity == 0) {
+                                  Navigator.of(context).pop();
+                                }
+                              });
+                            },
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          TextCustom(
+                            text: "$quantity",
                             color: Colors.black,
-                            border:
-                                Border.all(color: Colors.black, width: 2.0)),
-                        child: const SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: Center(
-                            // Thêm Center để căn giữa
-                            child: TextCustom(
-                              text: "Buy Now",
-                              fontSize: 25,
+                            fontSize: 25,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add, color: Colors.black),
+                            onPressed: () {
+                              setState(() {
+                                quantity++;
+                              });
+                            },
+                          )
+                        ]),
+                      ],
+                    ),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          context
+                              .read<CartBloc>()
+                              .add(PostCartEvent(widget.book.bookId, quantity));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: TextCustom(
+                                    text: 'Add items successfully',
+                                    fontSize: 20,
+                                    color: Colors.white)),
+                          );
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
                               color: Colors.white,
+                              border:
+                                  Border.all(color: Colors.black, width: 2.0)),
+                          child: const SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: Center(
+                              // Thêm Center để căn giữa
+                              child: TextCustom(
+                                text: "Add To Cart",
+                                fontSize: 25,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              )
-            ]),
-          ),
-          // Add more buttons as needed
-        ],
+                    const SizedBox(
+                      width: 15,
+                    ),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          context
+                              .read<CartBloc>()
+                              .add(PostCartEvent(widget.book.bookId, quantity));
+                          context.pushNamed(AppRoute.cart.name);
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.black,
+                              border:
+                                  Border.all(color: Colors.black, width: 2.0)),
+                          child: const SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: Center(
+                              // Thêm Center để căn giữa
+                              child: TextCustom(
+                                text: "Buy Now",
+                                fontSize: 25,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ]),
+            ),
+            // Add more buttons as needed
+          ],
+        ),
       ),
     );
   }

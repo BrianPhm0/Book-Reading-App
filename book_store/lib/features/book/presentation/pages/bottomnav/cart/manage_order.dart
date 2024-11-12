@@ -1,4 +1,3 @@
-import 'package:book_store/core/common/widgets/dialog.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/review_page.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/text_custom.dart';

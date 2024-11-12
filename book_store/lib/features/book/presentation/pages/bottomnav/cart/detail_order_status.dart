@@ -1,8 +1,6 @@
-import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
 import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class DetailOrderStatus extends StatefulWidget {
   const DetailOrderStatus({super.key});

@@ -1,3 +1,4 @@
+import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
 import 'package:flutter/material.dart';
 
 void showSnackBar(BuildContext context, String? content,
@@ -7,7 +8,7 @@ void showSnackBar(BuildContext context, String? content,
   }
 
   final snackBar = SnackBar(
-    content: Text(content),
+    content: TextCustom(text: content, fontSize: 25, color: Colors.white),
     duration: const Duration(
         seconds: 3), // Specify how long the snackbar should be displayed
     action: actionLabel != null && action != null

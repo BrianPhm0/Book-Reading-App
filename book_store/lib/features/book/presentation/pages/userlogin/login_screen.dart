@@ -78,7 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
               listener: (context, state) {
                 if (state is AuthFailure) {
                   showSnackBar(context, state.message);
-                } else if (state is AuthSuccess) {
+                } else if (state is AuthTokenSuccess) {
                   context.goNamed(AppRoute.bottomnav.name);
                 }
               },
@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         CustomeTextfield(
                           obscureText: false,
                           controller: emailController,
-                          validator: _formHandler.validators[0],
+                          // validator: _formHandler.validators[0],
                           name: 'Email',
                           inputType: TextInputType.emailAddress,
                         ),
@@ -146,8 +146,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               // Handle the Get Started button press
                               //handle success data
                               _formHandler.submit(() {
-                                context.read<AuthBloc>().add(AuthLogin(
-                                    email: emailController.text.trim(),
+                                context.read<AuthBloc>().add(AuthLoginToken(
+                                    name: emailController.text.trim(),
                                     password: passController.text.trim()));
                               });
                             },

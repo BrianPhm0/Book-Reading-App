@@ -1,9 +1,12 @@
+import 'package:book_store/features/book/presentation/bloc/address/address_bloc.dart';
+
 import 'package:book_store/features/book/presentation/providers/handleSubmit.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
 import 'package:book_store/features/book/presentation/widgets/custom_button.dart';
 // import 'package:book_store/features/book/presentation/widgets/custom_text_button.dart';
 import 'package:book_store/features/book/presentation/widgets/custome_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddAddressScreen extends StatefulWidget {
   const AddAddressScreen({super.key});
@@ -54,72 +57,85 @@ class _AddAddressState extends State<AddAddressScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.white,
-      appBar: const CustomAppBar(title: "Add New Address"),
-      body: SafeArea(
-          child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              //Form
-              Form(
-                key: formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    CustomeTextfield(
-                      name: "Name",
-                      inputType: TextInputType.none,
-                      controller: nameController,
-                      validator: _formHandler.validators[0],
-                    ),
-                    const SizedBox(height: 15),
-                    CustomeTextfield(
-                      name: "Phone",
-                      inputType: TextInputType.none,
-                      controller: phoneController,
-                      validator: _formHandler.validators[1],
-                    ),
-                    const SizedBox(height: 15),
-                    CustomeTextfield(
-                      name: "Address",
-                      inputType: TextInputType.none,
-                      controller: addressController,
-                      validator: _formHandler.validators[2],
-                    ),
-                    const SizedBox(height: 35),
-                    SizedBox(
-                      height: 50,
-                      child: CustomButton(
-                          name: "Delete this Address",
-                          rectangle: 5,
-                          borderColor: Colors.red,
-                          backgroundColor: Colors.red,
-                          onPressed: () {
-                            _formHandler.submit(() {});
-                          }),
-                    ),
-                    const SizedBox(height: 15),
-                    SizedBox(
-                      height: 50,
-                      child: CustomButton(
-                          name: "Save",
-                          rectangle: 5,
-                          onPressed: () {
-                            _formHandler.submit(() {});
-                          }),
-                    )
-                  ],
-                ),
-              )
-            ],
+    return BlocListener<AddressBloc, AddressState>(
+      listener: (context, state) {
+        if (state is SaveAddressSuccess) {
+          Navigator.of(context).pop();
+        } else if (state is AddressFail) {}
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: Colors.white,
+        appBar: const CustomAppBar(title: "Add New Address"),
+        body: SafeArea(
+            child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                //Form
+                Form(
+                  key: formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      CustomeTextfield(
+                        name: "Name",
+                        inputType: TextInputType.none,
+                        controller: nameController,
+                        validator: _formHandler.validators[0],
+                      ),
+                      const SizedBox(height: 15),
+                      CustomeTextfield(
+                        name: "Phone",
+                        inputType: TextInputType.none,
+                        controller: phoneController,
+                        validator: _formHandler.validators[1],
+                      ),
+                      const SizedBox(height: 15),
+                      CustomeTextfield(
+                        name: "Address",
+                        inputType: TextInputType.none,
+                        controller: addressController,
+                        validator: _formHandler.validators[2],
+                      ),
+                      const SizedBox(height: 35),
+                      // SizedBox(
+                      //   height: 50,
+                      //   child: CustomButton(
+                      //       name: "Delete this Address",
+                      //       rectangle: 5,
+                      //       borderColor: Colors.red,
+                      //       backgroundColor: Colors.red,
+                      //       onPressed: () {
+                      //         _formHandler.submit(() {});
+                      //       }),
+                      // ),
+                      const SizedBox(height: 15),
+                      SizedBox(
+                        height: 50,
+                        child: CustomButton(
+                            name: "Save",
+                            rectangle: 5,
+                            onPressed: () {
+                              _formHandler.submit(() {
+                                context.read<AddressBloc>().add(
+                                    SaveAddressEvent(
+                                        nameController.text.trim(),
+                                        phoneController.text.trim(),
+                                        addressController.text.trim()));
+                              });
+                            }),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
-        ),
-      )),
+        )),
+      ),
     );
   }
 }

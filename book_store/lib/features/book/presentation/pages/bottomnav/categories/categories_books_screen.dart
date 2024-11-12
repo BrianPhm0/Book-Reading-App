@@ -1,12 +1,11 @@
 import 'package:book_store/core/common/cubits/cubit/user_cubit.dart';
 import 'package:book_store/core/common/widgets/loader.dart';
-import 'package:book_store/features/book/business/entities/book.dart';
-import 'package:book_store/features/book/business/entities/user.dart';
-import 'package:book_store/features/book/presentation/bloc/book/bloc/book_bloc.dart';
-import 'package:book_store/features/book/presentation/pages/bottomnav/cart/review_page.dart';
+import 'package:book_store/features/book/business/entities/user/user.dart';
+import 'package:book_store/features/book/presentation/bloc/book/bloc/category/book_bloc.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/categories/user_book_args.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
+import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -32,17 +31,41 @@ class _CategoriesBooksScreenState extends State<CategoriesBooksScreen> {
     final state = context.read<BookBloc>().state;
     if (state is! BooksByTypeSuccess) {
       context.read<BookBloc>().add(GetBooksByType(widget.bookTypeId));
-      // context.read<AuthBloc>().add(AuthIsUserLoggedIn());
     }
   }
 
-  Widget buildItem(BuildContext context, int index, String title,
+  Widget buildItem(BuildContext context, int index, String title, String image,
       {required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
-      child: Image.asset(
-        'assets/book_cover/book_cover.png',
-        fit: BoxFit.contain, // Maintains the original aspect ratio
+      child: Image.network(
+        image,
+        fit: BoxFit.contain,
+        loadingBuilder: (context, child, loadingProgress) {
+          // Show CircularProgressIndicator while loading
+          if (loadingProgress == null) {
+            return child; // Image fully loaded
+          }
+          return Center(
+            child: CircularProgressIndicator(
+              color: Colors.black,
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded /
+                      (loadingProgress.expectedTotalBytes ?? 1)
+                  : null, // Progress indicator with loaded byte ratio
+            ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          // Show error icon if image fails to load
+          return const Center(
+            child: Icon(
+              Icons.error,
+              color: Colors.red,
+              size: 50,
+            ),
+          );
+        },
       ),
     );
   }
@@ -54,20 +77,18 @@ class _CategoriesBooksScreenState extends State<CategoriesBooksScreen> {
       appBar: CustomAppBar(
         title: widget.bookTypeName,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back), // Biểu tượng quay lại
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             context.read<BookBloc>().add(GetAllBookType());
-            Navigator.of(context).pop(); // Quay lại trang trước đó
+            Navigator.of(context).pop();
           },
         ),
       ),
       body: BlocBuilder<UserCubit, UserState>(
         builder: (context, authState) {
-          // print(authState);
           User? user;
           if (authState is UserLoggedIn) {
             user = authState.user;
-            // print(user);
           }
           return BlocConsumer<BookBloc, BookState>(
             listener: (context, state) {
@@ -78,12 +99,10 @@ class _CategoriesBooksScreenState extends State<CategoriesBooksScreen> {
               }
             },
             builder: (context, state) {
-              // print("catebook: + ${state}");
-
               if (state is BookLoading) {
                 return const Center(
                     child: Loader(size: 50.0, color: Colors.black));
-              } else if (state is BooksByTypeSuccess) {
+              } else if (state is BookItemSuccess) {
                 return LayoutBuilder(
                   builder: (context, constraints) {
                     return GridView.builder(
@@ -95,24 +114,35 @@ class _CategoriesBooksScreenState extends State<CategoriesBooksScreen> {
                         crossAxisSpacing: 15, // Horizontal spacing
                         mainAxisSpacing: 15, // Vertical spacing
                       ),
-                      itemBuilder: (context, index) => buildItem(
-                        context,
-                        index,
-                        state.booksByType[index].title,
-                        onTap: () {
-                          context.pushNamed(
-                            AppRoute.detailBook.name,
-                            extra: UserBookArgs(
-                                book: state.booksByType[index], user: user!),
-                          );
-                        },
-                      ),
-                      itemCount: state.booksByType.length,
+                      itemCount: state.bookItem.length,
+                      itemBuilder: (context, index) {
+                        final book = state.bookItem[index];
+                        return buildItem(
+                          context,
+                          index,
+                          book.title,
+                          book.image,
+                          onTap: () {
+                            context.pushNamed(
+                              AppRoute.detailBook.name,
+                              extra: UserBookArgs(
+                                  book: state.bookItem[index],
+                                  user: user,
+                                  brandName: widget.bookTypeName),
+                            );
+                          },
+                        );
+                      },
                     );
                   },
                 );
-              } else if (state is BookFailure) {
-                return Center(child: Text(state.toString()));
+              } else if (state is BookItemFail) {
+                return const Center(
+                    child: TextCustom(
+                        textAlign: TextAlign.center,
+                        text: "No books available in this category",
+                        fontSize: 30,
+                        color: Colors.black));
               }
               return const Center(child: Text('Unknown state'));
             },

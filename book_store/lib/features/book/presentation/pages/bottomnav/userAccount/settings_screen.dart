@@ -1,6 +1,6 @@
 import 'package:book_store/core/common/cubits/cubit/user_cubit.dart';
 import 'package:book_store/core/common/widgets/loader.dart';
-import 'package:book_store/features/book/business/entities/user.dart';
+import 'package:book_store/features/book/business/entities/user/user.dart';
 import 'package:book_store/features/book/presentation/bloc/auth/auth_bloc.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
@@ -56,13 +56,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     AppRoute.changes.name,
                     extra: {
                       'propertyName': userProperties[0],
-                      'propertyUser': user.userName ?? '',
+                      'propertyUser': user.username ?? '',
                       'index': 0,
                     },
                   );
                 },
                 child: textFieldSettings(
-                    "Name", user.userName ?? "user", Icons.email)),
+                    "Name", user.username ?? "user", Icons.email)),
             const SizedBox(
               height: 20,
             ),

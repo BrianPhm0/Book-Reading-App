@@ -1,7 +1,4 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:book_store/features/book/business/entities/book.dart';
-import 'package:book_store/features/book/business/entities/user.dart';
-import 'package:book_store/features/book/presentation/widgets/custom_button.dart';
 import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
 import 'package:flutter/material.dart';
 
@@ -150,7 +147,7 @@ class _DetailBookBottomSheetState extends State<ReviewPage> {
         context: context,
         // ignore: avoid_types_as_parameter_names
         builder: (BuildContext context) {
-          return Rating();
+          return const Rating();
         });
   }
 }

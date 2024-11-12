@@ -1,4 +1,4 @@
-import 'package:book_store/features/book/business/entities/book_type.dart';
+import 'package:book_store/features/book/business/entities/categorybook/book_type.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/add_address_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/cart.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/detail_history_order.dart';
@@ -150,7 +150,11 @@ class AppRouter {
         builder: (context, state) {
           final UserBookArgs args = state.extra as UserBookArgs;
 
-          return DetailBook(book: args.book, user: args.user);
+          return DetailBook(
+            book: args.book,
+            user: args.user,
+            brandName: args.brandName,
+          );
         },
       ),
       GoRoute(

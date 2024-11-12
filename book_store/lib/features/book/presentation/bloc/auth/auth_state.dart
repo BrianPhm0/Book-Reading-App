@@ -26,6 +26,11 @@ final class AuthFailure extends AuthState {
   const AuthFailure([this.message]);
 }
 
+final class AuthTokenSuccess extends AuthState {
+  final String token;
+  const AuthTokenSuccess(this.token);
+}
+
 // New state for successful password reset
 final class AuthPasswordResetSuccess extends AuthState {}
 

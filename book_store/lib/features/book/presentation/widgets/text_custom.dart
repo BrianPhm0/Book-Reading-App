@@ -8,7 +8,7 @@ class TextCustom extends StatelessWidget {
   final Color color;
   final int? maxLines; // Added maxLines
   final TextOverflow? textOverflow; // Added textOverflow
-
+  final TextAlign? textAlign;
   const TextCustom({
     super.key,
     required this.text,
@@ -18,6 +18,7 @@ class TextCustom extends StatelessWidget {
     this.fontWeight,
     this.maxLines, // Add these to the constructor
     this.textOverflow,
+    this.textAlign,
   });
 
   @override
@@ -33,6 +34,7 @@ class TextCustom extends StatelessWidget {
         fontWeight: fontWeight,
         color: color,
       ),
+      textAlign: textAlign,
     );
   }
 }

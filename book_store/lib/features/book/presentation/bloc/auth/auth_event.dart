@@ -26,11 +26,22 @@ final class AuthLogin extends AuthEvent {
   const AuthLogin({required this.email, required this.password});
 }
 
+final class AuthLoginToken extends AuthEvent {
+  final String name;
+  final String password;
+
+  const AuthLoginToken({required this.name, required this.password});
+}
+
+final class AuthGetUser extends AuthEvent {}
+
 final class AuthResetPass extends AuthEvent {
   final String email;
   const AuthResetPass({required this.email});
 }
 
 final class AuthIsUserLoggedIn extends AuthEvent {}
+
+final class AuthIsTokendIn extends AuthEvent {}
 
 final class AuthUserSignOut extends AuthEvent {}

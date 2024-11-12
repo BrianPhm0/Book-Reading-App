@@ -1,7 +1,11 @@
 //connecting bloc with UI
 import 'package:book_store/core/common/cubits/cubit/user_cubit.dart';
+import 'package:book_store/features/book/presentation/bloc/address/address_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/auth/auth_bloc.dart';
-import 'package:book_store/features/book/presentation/bloc/book/bloc/book_bloc.dart';
+import 'package:book_store/features/book/presentation/bloc/book/bloc/category/book_bloc.dart';
+import 'package:book_store/features/book/presentation/bloc/book/bloc/home/home_bloc.dart';
+import 'package:book_store/features/book/presentation/bloc/cart/bloc/cart_bloc.dart';
+import 'package:book_store/features/book/presentation/bloc/check/check_bloc.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/init_dependencies.dart';
 import 'package:device_preview/device_preview.dart';
@@ -31,6 +35,26 @@ Future<void> main() async {
           BlocProvider(
             // handle book logic
             create: (context) => serviceLocator<BookBloc>(),
+            lazy: false,
+          ),
+          BlocProvider(
+            // handle book logic
+            create: (context) => serviceLocator<HomeBloc>(),
+            lazy: false,
+          ),
+          BlocProvider(
+            // handle book logic
+            create: (context) => serviceLocator<CartBloc>(),
+            lazy: false,
+          ),
+          BlocProvider(
+            // handle book logic
+            create: (context) => serviceLocator<AddressBloc>(),
+            lazy: false,
+          ),
+          BlocProvider(
+            // handle book logic
+            create: (context) => serviceLocator<CheckBloc>(),
             lazy: false,
           ),
           // Add a different bloc here if needed
@@ -72,7 +96,7 @@ class _MyWidgetState extends State<MyWidget> {
   void initState() {
     super.initState();
     // FirebaseAuth.instance.signOut();
-    context.read<AuthBloc>().add(AuthIsUserLoggedIn());
+    context.read<AuthBloc>().add(AuthIsTokendIn());
   }
 
   @override
@@ -85,9 +109,7 @@ class _MyWidgetState extends State<MyWidget> {
       builder: (context, child) {
         return BlocListener<UserCubit, UserState>(
           listener: (context, state) {
-            if (state is UserLoggedIn) {
-              // print('hihi');
-              // print(state);
+            if (state is UserLoggedInToken) {
               AppRouter.goTo('/bottomnav');
             }
           },

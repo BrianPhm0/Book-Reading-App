@@ -1,5 +1,5 @@
 import 'package:book_store/core/common/widgets/loader.dart';
-import 'package:book_store/features/book/presentation/bloc/book/bloc/book_bloc.dart';
+import 'package:book_store/features/book/presentation/bloc/book/bloc/category/book_bloc.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
 import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
@@ -41,18 +41,22 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.asset(
-                'assets/categories/$index.png', // Sử dụng tên danh mục cho hình ảnh
+                'assets/categories/${index % 8}.png', // Sử dụng tên danh mục cho hình ảnh
                 fit: BoxFit.cover,
               ),
             ),
           ),
           Positioned.fill(
-            child: Align(
-              alignment: Alignment.center,
-              child: TextCustom(
-                text: bookType,
-                fontSize: 20,
-                color: Colors.white,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextCustom(
+                  textAlign: TextAlign.center,
+                  text: bookType,
+                  fontSize: 20,
+                  maxLines: 3,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
@@ -95,6 +99,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   index,
                   state.bookType[index].bookTypeName,
                   onTap: () {
+                    context
+                        .read<BookBloc>()
+                        .add(GetBooksByType(state.bookType[index].bookTypeId));
                     context.pushNamed(AppRoute.categoriyBooks.name,
                         extra: state.bookType[index]);
                   },
@@ -103,7 +110,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               ),
             );
           } else if (state is BookFailure) {
-            return Center(child: Text(state.toString()));
+            return const Center(
+                child: TextCustom(
+                    text: "No books available in this category",
+                    fontSize: 20,
+                    color: Colors.black));
           }
           return Center(
             child: Text('Unknown state: ${state.toString()}'),

@@ -14,3 +14,9 @@ final class UserLoggedIn extends UserState {
 
   const UserLoggedIn(this.user);
 }
+
+final class UserLoggedInToken extends UserState {
+  final String token;
+
+  const UserLoggedInToken(this.token);
+}
