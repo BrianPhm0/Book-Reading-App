@@ -32,6 +32,16 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
     _selectedIndex = widget.initialIndex; // Initialize here
   }
 
+  @override
+  void didUpdateWidget(covariant BottomNavScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialIndex != _selectedIndex) {
+      setState(() {
+        _selectedIndex = widget.initialIndex;
+      });
+    }
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;

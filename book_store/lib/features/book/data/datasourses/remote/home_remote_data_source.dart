@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 
 import 'dart:convert';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 abstract interface class HomeRemoteDataSource {
   Future<List<BookItemModel>> getBestDeal();
   Future<List<BookItemModel>> getTopBook();
@@ -67,6 +69,12 @@ class HomeRemoteDataSourceImp implements HomeRemoteDataSource {
     }
   }
 
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token'); // Lấy token từ SharedPreferences
+    return token;
+  }
+
   @override
   Future<List<BookItemModel>> getTopBook() async {
     final url = Uri.parse(ApiConfig.getTopBook);
@@ -74,6 +82,9 @@ class HomeRemoteDataSourceImp implements HomeRemoteDataSource {
     final headers = {'accept': '*/*'};
 
     try {
+      final token = await getToken();
+
+      final headers = {'accept': '*/*', 'Authorization': 'Bearer $token'};
       final res = await http.get(url, headers: headers);
 
       if (res.statusCode == 200) {

@@ -27,8 +27,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<GetHomeBookEvent>(_onGetHomeBook);
   }
 
-  Future<void> _onGetHomeBook(
-      GetHomeBookEvent event, Emitter<HomeState> emit) async {
+  void _onGetHomeBook(GetHomeBookEvent event, Emitter<HomeState> emit) async {
     emit(HomeLoading());
 
     // Call use case to get the latest books and top books

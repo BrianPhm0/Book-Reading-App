@@ -2,8 +2,8 @@ import 'package:book_store/features/book/business/entities/book_by_category/book
 import 'package:equatable/equatable.dart';
 
 class CartItem extends Equatable {
-  final int quantity;
-  final int total;
+  final String quantity;
+  final String total;
   final BookItem? bookItem;
 
   const CartItem(this.quantity, this.total, this.bookItem);

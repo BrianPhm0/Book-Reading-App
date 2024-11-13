@@ -11,6 +11,7 @@ abstract interface class CartRemoteDataSource {
   Future<String> postCartItem(String id, int quantity);
   Future<List<CartModel>> getCart();
   Future<String> deleteCart(String id);
+  Future<String> updateItem(String id, int quantity);
 }
 
 @override
@@ -53,6 +54,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
 
     try {
       final res = await http.get(url, headers: headers);
+
       if (res.statusCode == 200) {
         final data = json.decode(res.body);
 
@@ -86,6 +88,25 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
 
     try {
       final res = await http.delete(url, headers: headers);
+      if (res.statusCode == 200) {
+        return res.body;
+      } else {
+        throw Exception('Failed to load data. Status code: ${res.statusCode}');
+      }
+    } catch (e) {
+      throw ServerException('Error: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<String> updateItem(String id, int quantity) async {
+    final url = Uri.parse('${ApiConfig.updateItem}$id&quantity=$quantity');
+
+    final token = await getToken();
+
+    final headers = {'accept': '*/*', 'Authorization': 'Bearer $token'};
+    try {
+      final res = await http.put(url, headers: headers);
       if (res.statusCode == 200) {
         return res.body;
       } else {

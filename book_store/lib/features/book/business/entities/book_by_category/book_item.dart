@@ -13,7 +13,7 @@ class BookItem extends Equatable {
   final String? rating;
   final String? description;
   final String authorName;
-  final String author;
+
   final List<String>? brandNames;
 
   const BookItem(
@@ -29,7 +29,7 @@ class BookItem extends Equatable {
       this.description,
       this.authorName,
       this.brandNames,
-      this.author);
+);
 
   // final String uploadDate;
 
@@ -46,7 +46,7 @@ class BookItem extends Equatable {
         rating,
         description,
         authorName,
-        author,
+
         brandNames,
       ];
 }

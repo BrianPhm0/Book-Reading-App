@@ -2,19 +2,19 @@ import 'package:book_store/features/book/business/entities/book_by_category/book
 
 class BookItemModel extends BookItem {
   const BookItemModel(
-      super.bookId,
-      super.title,
-      super.brandId,
-      super.price,
-      super.uploadDate,
-      super.quantity,
-      super.typeBookId,
-      super.image,
-      super.rating,
-      super.description,
-      super.authorName,
-      super.brandNames,
-      super.author);
+    super.bookId,
+    super.title,
+    super.brandId,
+    super.price,
+    super.uploadDate,
+    super.quantity,
+    super.typeBookId,
+    super.image,
+    super.rating,
+    super.description,
+    super.authorName,
+    super.brandNames,
+  );
 
   factory BookItemModel.fromJson(Map<String, dynamic> json) {
     return BookItemModel(
@@ -34,7 +34,6 @@ class BookItemModel extends BookItem {
       json['description']?.toString(),
       json['author_name'] ?? '',
       json['brandNames'] != null ? List<String>.from(json['brandNames']) : null,
-      json['authorName'] ?? '',
     );
   }
 

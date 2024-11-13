@@ -16,6 +16,13 @@ final class PostCartEvent extends CartEvent {
   const PostCartEvent(this.id, this.quantity);
 }
 
+final class UpdateItemEvent extends CartEvent {
+  final String id;
+  final int quantity;
+
+  const UpdateItemEvent(this.id, this.quantity);
+}
+
 final class DeleteCartEvent extends CartEvent {
   final String id;
 

@@ -5,6 +5,8 @@ import 'package:book_store/features/book/business/repositories/book_repository.d
 import 'package:book_store/features/book/business/repositories/cart_repository.dart';
 import 'package:book_store/features/book/business/repositories/check_repository.dart';
 import 'package:book_store/features/book/business/repositories/home_repository.dart';
+import 'package:book_store/features/book/business/repositories/order_repository.dart';
+import 'package:book_store/features/book/business/repositories/voucher_repository.dart';
 import 'package:book_store/features/book/business/usecases/address/get_address.dart';
 import 'package:book_store/features/book/business/usecases/address/save_address.dart';
 import 'package:book_store/features/book/business/usecases/book/get_latest_book.dart';
@@ -14,12 +16,14 @@ import 'package:book_store/features/book/business/usecases/book/get_purchase_boo
 import 'package:book_store/features/book/business/usecases/cart/delete_cart.dart';
 import 'package:book_store/features/book/business/usecases/cart/get_cart.dart';
 import 'package:book_store/features/book/business/usecases/cart/post_cart_item.dart';
+import 'package:book_store/features/book/business/usecases/cart/update_item.dart';
 import 'package:book_store/features/book/business/usecases/check/pay_cash.dart';
 import 'package:book_store/features/book/business/usecases/detail/get_detail.dart';
 import 'package:book_store/features/book/business/usecases/detail/get_review.dart';
 import 'package:book_store/features/book/business/usecases/home/best_deal.dart';
 import 'package:book_store/features/book/business/usecases/home/latest_book.dart';
 import 'package:book_store/features/book/business/usecases/home/top_book.dart';
+import 'package:book_store/features/book/business/usecases/order/get_order.dart';
 import 'package:book_store/features/book/business/usecases/user/user_current.dart';
 import 'package:book_store/features/book/business/usecases/user/user_forget_pass.dart';
 import 'package:book_store/features/book/business/usecases/user/user_get_user.dart';
@@ -29,6 +33,9 @@ import 'package:book_store/features/book/business/usecases/user/user_login_jwt.d
 import 'package:book_store/features/book/business/usecases/user/user_sign_out.dart';
 import 'package:book_store/features/book/business/usecases/user/user_sign_up.dart';
 import 'package:book_store/features/book/business/usecases/user/user_token_current.dart';
+import 'package:book_store/features/book/business/usecases/voucher/add_voucher.dart';
+import 'package:book_store/features/book/business/usecases/voucher/get_public_voucher.dart';
+import 'package:book_store/features/book/business/usecases/voucher/get_voucher.dart';
 import 'package:book_store/features/book/data/datasourses/local/local_data.dart';
 
 import 'package:book_store/features/book/data/datasourses/remote/auth_remote_data_source.dart';
@@ -37,6 +44,8 @@ import 'package:book_store/features/book/data/datasourses/remote/cart_remote_dat
 import 'package:book_store/features/book/data/datasourses/remote/check_data.dart';
 import 'package:book_store/features/book/data/datasourses/remote/detail_data.dart';
 import 'package:book_store/features/book/data/datasourses/remote/home_remote_data_source.dart';
+import 'package:book_store/features/book/data/datasourses/remote/order_data.dart';
+import 'package:book_store/features/book/data/datasourses/remote/voucher_data.dart';
 import 'package:book_store/features/book/data/repositories/address_repository_impl.dart';
 import 'package:book_store/features/book/data/repositories/auth_repository_impl.dart';
 import 'package:book_store/features/book/data/repositories/book_repository_impl.dart';
@@ -45,6 +54,8 @@ import 'package:book_store/features/book/data/repositories/check_repository_impl
 import 'package:book_store/features/book/data/repositories/detail_repository.dart';
 import 'package:book_store/features/book/data/repositories/detail_repository_impl.dart';
 import 'package:book_store/features/book/data/repositories/home_repository_impl.dart';
+import 'package:book_store/features/book/data/repositories/order_repository_imple.dart';
+import 'package:book_store/features/book/data/repositories/voucher_repository_impl.dart';
 import 'package:book_store/features/book/presentation/bloc/address/address_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/auth/auth_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/book/bloc/category/book_bloc.dart';
@@ -52,6 +63,8 @@ import 'package:book_store/features/book/presentation/bloc/book/bloc/home/home_b
 import 'package:book_store/features/book/presentation/bloc/cart/bloc/cart_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/check/check_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/detail/detail_bloc.dart';
+import 'package:book_store/features/book/presentation/bloc/order/order_bloc.dart';
+import 'package:book_store/features/book/presentation/bloc/voucher/voucher_bloc.dart';
 import 'package:book_store/firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -79,6 +92,8 @@ Future<void> initDependencies() async {
   _initAddress();
   _initCheck();
   _initDetail();
+  _initVoucher();
+  _initOrder();
 }
 
 void _initAuth() {
@@ -164,10 +179,12 @@ void _initCart() {
     ..registerFactory<PostCartItem>(() => PostCartItem(serviceLocator()))
     ..registerFactory<GetCart>(() => GetCart(serviceLocator()))
     ..registerFactory<DeleteCart>(() => DeleteCart(serviceLocator()))
+    ..registerFactory<UpdateItem>(() => UpdateItem(serviceLocator()))
     ..registerLazySingleton<CartBloc>(() => CartBloc(
         postCartItem: serviceLocator(),
         getCart: serviceLocator(),
-        deleteCart: serviceLocator()));
+        deleteCart: serviceLocator(),
+        updateItem: serviceLocator()));
 }
 
 void _initAddress() {
@@ -202,4 +219,30 @@ void _initDetail() {
     // ..registerFactory<GetAddress>(() => GetAddress(serviceLocator()))
     ..registerLazySingleton<DetailBloc>(() =>
         DetailBloc(getDetail: serviceLocator(), getReview: serviceLocator()));
+}
+
+void _initVoucher() {
+  serviceLocator
+    ..registerFactory<VoucherData>(() => VoucherDataImpl())
+    ..registerFactory<VoucherRepository>(
+        () => VoucherRepositoryImpl(serviceLocator()))
+    ..registerFactory<Getvoucher>(() => Getvoucher(serviceLocator()))
+    ..registerFactory<GetPublicVoucher>(
+        () => GetPublicVoucher(serviceLocator()))
+    ..registerFactory<AddVoucher>(() => AddVoucher(serviceLocator()))
+    ..registerLazySingleton<VoucherBloc>(() => VoucherBloc(
+        getvoucher: serviceLocator(),
+        getPublicVoucher: serviceLocator(),
+        addVoucher: serviceLocator()));
+}
+
+void _initOrder() {
+  serviceLocator
+    ..registerFactory<OrderData>(() => OrderDataImpl())
+    ..registerFactory<OrderRepository>(
+        () => OrderRepositoryImpl(serviceLocator()))
+    ..registerFactory<GetOrder>(() => GetOrder(serviceLocator()))
+    // ..registerFactory<GetAddress>(() => GetAddress(serviceLocator()))
+    ..registerLazySingleton<OrderBloc>(
+        () => OrderBloc(getOrder: serviceLocator()));
 }

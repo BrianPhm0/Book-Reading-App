@@ -1,6 +1,13 @@
+import 'package:book_store/core/common/widgets/loader.dart';
+import 'package:book_store/features/book/business/entities/order/order_item.dart';
+import 'package:book_store/features/book/presentation/bloc/book/bloc/home/home_bloc.dart';
+import 'package:book_store/features/book/presentation/bloc/order/order_bloc.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/review_page.dart';
+import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ManageOrder extends StatefulWidget {
   const ManageOrder({super.key});
@@ -10,6 +17,13 @@ class ManageOrder extends StatefulWidget {
 }
 
 class _ManageOrderState extends State<ManageOrder> {
+  @override
+  void initState() {
+    super.initState();
+
+    context.read<OrderBloc>().add(GetOrderEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -46,36 +60,66 @@ class _ManageOrderState extends State<ManageOrder> {
           ),
         ),
         backgroundColor: Colors.white,
-        body: SafeArea(
-          child: TabBarView(
-            children: [
-              Center(
-                child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    return buildStatus(context, index);
-                  },
-                  itemCount: 4,
+        body: BlocConsumer<OrderBloc, OrderState>(
+          listener: (context, state) {},
+          builder: (context, state) {
+            if (state is OrderLoading) {
+              return const Center(
+                  child: Loader(size: 50.0, color: Colors.black));
+            } else if (state is GetOrderSuccess) {
+              List<OrderItem> processingOrders = state.order['processing']!;
+              List<OrderItem> completeOrders = state.order['completed']!;
+
+              return SafeArea(
+                child: TabBarView(
+                  children: [
+                    Center(
+                      child: processingOrders.isEmpty
+                          ? const TextCustom(
+                              textAlign: TextAlign.center,
+                              text:
+                                  "No active orders. Place an order to track status!",
+                              fontSize: 25,
+                              color: Colors.black)
+                          : ListView.builder(
+                              itemBuilder: (context, index) {
+                                return buildStatus(
+                                    context, index, processingOrders[index]);
+                              },
+                              itemCount: processingOrders.length,
+                            ),
+                    ),
+                    Center(
+                      child: completeOrders.isEmpty
+                          ? const TextCustom(
+                              textAlign: TextAlign.center,
+                              text:
+                                  "You have no orders yet. Start shopping now!",
+                              fontSize: 25,
+                              color: Colors.black)
+                          : ListView.builder(
+                              itemBuilder: (context, index) {
+                                return buildHistory(
+                                    context, index, completeOrders[index]);
+                              },
+                              itemCount: completeOrders.length,
+                            ),
+                    ),
+                  ],
                 ),
-              ), // Replace with your Orders widget
-              Center(
-                child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    return buildHistory(context, index);
-                  },
-                  itemCount: 4,
-                ),
-              ),
-            ],
-          ),
+              );
+            }
+            return const Center(child: Loader(size: 50.0, color: Colors.black));
+          },
         ),
       ),
     );
   }
 
-  Widget buildStatus(BuildContext context, int index) {
+  Widget buildStatus(BuildContext context, int index, OrderItem? order) {
     return GestureDetector(
       onTap: () {
-        // context.pushNamed(AppRoute.detailStatus.name);
+        context.pushNamed(AppRoute.detailStatus.name);
       },
       child: Padding(
         padding: const EdgeInsets.all(15),
@@ -95,54 +139,73 @@ class _ManageOrderState extends State<ManageOrder> {
               ),
             ],
           ),
-          child: Column(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              const SizedBox(
-                height: 5,
-              ),
               Flexible(
-                flex: 3,
-                child: Row(
+                flex: 2,
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(width: 5),
-                    Image.asset(
-                      'assets/book_cover/book_cover.png',
-                      width: 80,
-                      height: 130,
-                      fit: BoxFit.cover,
-                    ),
-                    const SizedBox(width: 10),
-                    const Expanded(
-                      flex: 3,
+                    FittedBox(
                       child: TextCustom(
-                        text: "Venom the last dance",
-                        fontSize: 25,
+                        text: '${order?.name} | ${order?.phone}',
+                        fontSize: 20,
+                        color: Colors.black,
                         fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    FittedBox(
+                      child: TextCustom(
+                        text: order?.address ?? '',
+                        fontSize: 22,
                         color: Colors.black,
                       ),
                     ),
-                    const Expanded(
-                      flex: 2,
-                      child: Column(
-                        children: [
-                          TextCustom(
-                            text: "Awaiting comfirming",
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          TextCustom(
-                            text: "Total money: \$160",
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ],
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    FittedBox(
+                      child: TextCustom(
+                        text: order?.orderDate ?? '',
+                        fontSize: 22,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Container(
+                  height: 150.0,
+                  width: 1,
+                  color: Colors.grey,
+                ),
+              ),
+              Flexible(
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextCustom(
+                      text: order?.status ?? '',
+                      fontSize: 20,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    FittedBox(
+                      child: TextCustom(
+                        text: '${order?.totalAmount} VND',
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
@@ -155,10 +218,10 @@ class _ManageOrderState extends State<ManageOrder> {
     );
   }
 
-  Widget buildHistory(BuildContext context, int index) {
+  Widget buildHistory(BuildContext context, int index, OrderItem? order) {
     return GestureDetector(
       onTap: () {
-        // context.pushNamed(AppRoute.detailHistory.name);
+        context.pushNamed(AppRoute.detailStatus.name);
       },
       child: Padding(
         padding: const EdgeInsets.all(15),
@@ -178,125 +241,78 @@ class _ManageOrderState extends State<ManageOrder> {
               ),
             ],
           ),
-          child: Column(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              const SizedBox(
-                height: 5,
-              ),
               Flexible(
-                flex: 3,
-                child: Row(
+                flex: 2,
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
-                      flex: 2,
-                      child: FittedBox(
-                        child: Image.asset(
-                          'assets/book_cover/book_cover.png',
-                          fit: BoxFit.cover,
-                        ),
+                    FittedBox(
+                      child: TextCustom(
+                        text: '${order?.name} | ${order?.phone}',
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const Expanded(
-                      flex: 3,
+                    FittedBox(
                       child: TextCustom(
-                        text: "Venom the last dance",
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
+                        text: order?.address ?? '',
+                        fontSize: 22,
                         color: Colors.black,
                       ),
                     ),
-                    const Expanded(
-                      flex: 2,
-                      child: Column(
-                        children: [
-                          TextCustom(
-                            text: "Completed",
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green,
-                          ),
-                          SizedBox(
-                            height: 15,
-                          ),
-                          TextCustom(
-                            text: "Total money: \$160",
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ],
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    FittedBox(
+                      child: TextCustom(
+                        text: order?.orderDate ?? '',
+                        fontSize: 22,
+                        color: Colors.black,
                       ),
                     ),
                   ],
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Container(
+                  height: 150.0,
+                  width: 1,
+                  color: Colors.grey,
+                ),
+              ),
               Flexible(
-                  flex: 1,
-                  child: Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        const Spacer(),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              _showReviewBookSheet(context);
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(
-                                      color: Colors.black, width: 2.0)),
-                              child: const SizedBox(
-                                width: double.infinity,
-                                height: 50,
-                                child: Center(
-                                  // Thêm Center để căn giữa
-                                  child: TextCustom(
-                                    text: "Review",
-                                    fontSize: 20,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              // context.pushNamed(AppRoute.cart.name);
-                              Navigator.of(context).pop();
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  border: Border.all(
-                                      color: Colors.black, width: 2.0)),
-                              child: const SizedBox(
-                                width: double.infinity,
-                                height: 50,
-                                child: Center(
-                                  // Thêm Center để căn giữa
-                                  child: TextCustom(
-                                    text: "Buy Again",
-                                    fontSize: 20,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                flex: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextCustom(
+                      text: order?.status ?? '',
+                      fontSize: 20,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ))
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    FittedBox(
+                      child: TextCustom(
+                        text: '${order?.totalAmount} VND',
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

@@ -65,7 +65,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       onTap: () {
                         context.pushNamed(
                           AppRoute.readingBook.name,
-                          extra: 'assets/ebook/harry_potter.pdf',
+                          extra:
+                              'https://firebasestorage.googleapis.com/v0/b/bookstore-59884.appspot.com/o/images%2F374a111f-3fcb-4e72-b0e7-82e2b5dd2e74.pdf?alt=media&token=6ae0e6df-5c46-4a2f-9aea-5b50ab024c7d&fbclid=IwY2xjawGhXlhleHRuA2FlbQIxMAABHV9GWsFmW-0cQB3ZddW55leO5WxuUyvSosBfu5W8Jbg6NJhA5jDlL4LZzQ_aem_O65eTRDhupzUs14EU89FnQ',
                         );
                       },
                       child:

@@ -1,10 +1,13 @@
 import 'package:book_store/features/book/business/entities/categorybook/book_type.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/add_address_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/cart.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/cart/cart_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/cart/claim_voucher_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/detail_history_order.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/detail_order_status.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/manage_order.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/payment_success_screen.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/cart/voucher_args.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/voucher_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/categories/detail_book.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/categories/user_book_args.dart';
@@ -41,7 +44,8 @@ enum AppRoute {
   voucher,
   detailStatus,
   detailHistory,
-  readingBook
+  readingBook,
+  claimVoucher,
 }
 
 class AppRouter {
@@ -73,7 +77,9 @@ class AppRouter {
         path: '/bottomnav',
         name: AppRoute.bottomnav.name,
         builder: (context, state) {
-          return const BottomNavScreen();
+          final initialIndex =
+              state.extra as int? ?? 0; // Fallback to 0 if null
+          return BottomNavScreen(initialIndex: initialIndex);
         },
       ),
       GoRoute(
@@ -99,7 +105,8 @@ class AppRouter {
         path: '/checkout',
         name: AppRoute.checkout.name,
         builder: (context, state) {
-          return const CheckOutScreen();
+          final args = state.extra as String;
+          return CheckOutScreen(voucher: args);
         },
       ),
       GoRoute(
@@ -163,14 +170,26 @@ class AppRouter {
         path: '/cart',
         name: AppRoute.cart.name,
         builder: (context, state) {
-          return const Cart();
+          return const CartScreen();
         },
       ),
+      // GoRoute(
+      //   path: '/bottomNav',
+      //   name: AppRoute.bottomNav.name,
+      //   builder: (context, state) {
+      //     final initialIndex =
+      //         state.extra as int? ?? 0; // Fallback to 0 if null
+      //     return BottomNavScreen(initialIndex: initialIndex);
+      //   },
+      // ),
       GoRoute(
         path: '/voucher',
         name: AppRoute.voucher.name,
         builder: (context, state) {
-          return const VoucherScreen();
+          final args = state.extra as int;
+          return VoucherScreen(
+            initIndex: args, // Truyền theo tên
+          );
         },
       ),
       GoRoute(
@@ -193,6 +212,13 @@ class AppRouter {
         builder: (context, state) {
           final args = state.extra as String;
           return ReadingBook(pdfPath: args);
+        },
+      ),
+      GoRoute(
+        path: '/claimVoucher',
+        name: AppRoute.claimVoucher.name, // Ensure this matches exactly
+        builder: (context, state) {
+          return const ClaimVoucherScreen();
         },
       ),
     ],

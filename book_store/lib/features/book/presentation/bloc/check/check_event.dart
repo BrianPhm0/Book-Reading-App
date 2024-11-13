@@ -13,7 +13,7 @@ final class PayCashEvent extends CheckEvent {
   final String name;
   final String phone;
   final String address;
-  final String? voucher;
+  final String voucher;
 
-  const PayCashEvent(this.name, this.phone, this.address, [this.voucher]);
+  const PayCashEvent(this.name, this.phone, this.address, this.voucher);
 }

@@ -42,6 +42,8 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<Either<Failure, List<BookItem>>> getTopBook() async {
     try {
       final getTopBook = await homeRemoteDataSource.getTopBook();
+
+      
       if (getTopBook.isNotEmpty) {
         return right(getTopBook);
       }

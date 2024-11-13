@@ -13,7 +13,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class CheckOutScreen extends StatefulWidget {
-  const CheckOutScreen({super.key});
+  final String? voucher;
+  const CheckOutScreen({super.key, this.voucher});
 
   @override
   State<CheckOutScreen> createState() => _CheckOutScreenState();
@@ -21,13 +22,19 @@ class CheckOutScreen extends StatefulWidget {
 
 class _CheckOutScreenState extends State<CheckOutScreen> {
   List<String> payment = ['Cash', 'Paypal', 'Momo'];
-  Address? addressDefault; // Store selected address
+  Address? addressDefault;
+  late String _voucher;
   int selectedPayment = 0;
   int selectedAddressIndex = -1;
 
   @override
   void initState() {
     super.initState();
+    if (widget.voucher == null) {
+      _voucher = '';
+    } else {
+      _voucher = widget.voucher!;
+    }
     context.read<CheckBloc>().add(ResetCheckEvent());
   }
 
@@ -201,7 +208,8 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                           context.read<CheckBloc>().add(PayCashEvent(
                               addressDefault!.name,
                               addressDefault!.phone,
-                              addressDefault!.address));
+                              addressDefault!.address,
+                              _voucher));
                         } else {
                           showSnackBar(context, 'Please choose your address');
                         }

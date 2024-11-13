@@ -7,6 +7,8 @@ import 'package:book_store/features/book/presentation/bloc/book/bloc/home/home_b
 import 'package:book_store/features/book/presentation/bloc/cart/bloc/cart_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/check/check_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/detail/detail_bloc.dart';
+import 'package:book_store/features/book/presentation/bloc/order/order_bloc.dart';
+import 'package:book_store/features/book/presentation/bloc/voucher/voucher_bloc.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/init_dependencies.dart';
 import 'package:device_preview/device_preview.dart';
@@ -61,6 +63,16 @@ Future<void> main() async {
           BlocProvider(
             // handle book logic
             create: (context) => serviceLocator<DetailBloc>(),
+            lazy: false,
+          ),
+          BlocProvider(
+            // handle book logic
+            create: (context) => serviceLocator<VoucherBloc>(),
+            lazy: false,
+          ),
+          BlocProvider(
+            // handle book logic
+            create: (context) => serviceLocator<OrderBloc>(),
             lazy: false,
           ),
           // Add a different bloc here if needed

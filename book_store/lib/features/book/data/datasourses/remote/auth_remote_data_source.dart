@@ -155,13 +155,18 @@ class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
 
     try {
       final response = await http.post(url, headers: headers, body: body);
+
+      // print(response.statusCode);
       if (response.statusCode == 200) {
+        // print('haha');
         final data = jsonDecode(response.body);
         final token = data['token'] as String?;
+
         // Xử lý thành công
         if (token != null) {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', token);
+
           return token;
         } else {
           throw Exception("Login failed");

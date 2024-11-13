@@ -1,6 +1,10 @@
 import 'package:book_store/core/common/widgets/loader.dart';
+import 'package:book_store/core/utils/show_snackbar.dart';
+import 'package:book_store/features/book/business/entities/book_by_category/book_item.dart';
 import 'package:book_store/features/book/business/entities/cart/cart.dart';
+import 'package:book_store/features/book/business/entities/voucher/voucher.dart';
 import 'package:book_store/features/book/presentation/bloc/cart/bloc/cart_bloc.dart';
+import 'package:book_store/features/book/presentation/pages/bottomnav/cart/voucher_args.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
 import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
@@ -8,17 +12,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+// ignore: must_be_immutable
 class CartScreen extends StatefulWidget {
-  const CartScreen({super.key});
+  final Voucher? initVoucher;
+  final int? initIndex;
+
+  const CartScreen({super.key, this.initVoucher, this.initIndex});
 
   @override
   State<CartScreen> createState() => _CartScreenState();
 }
 
 class _CartScreenState extends State<CartScreen> {
+  late Voucher? _selectedVoucher;
+  late int? _selectedIndex;
   @override
   void initState() {
     super.initState();
+    _selectedVoucher = widget.initVoucher;
+    _selectedIndex = widget.initIndex;
     context.read<CartBloc>().add(GetCartEvent());
   }
 
@@ -28,32 +40,32 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<CartBloc, CartState>(
-      listener: (context, state) {
-        if (state is CartFailure) {}
-      },
-      builder: (context, state) {
-        if (state is CartLoading) {
-          return const Center(child: Loader(size: 50.0, color: Colors.black));
-        } else if (state is GetCartSuccess) {
-          return Scaffold(
-            backgroundColor: Colors.white,
-            appBar: CustomAppBar(
-              title: "Cart",
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    context.pushNamed(AppRoute.manageOrder.name);
-                  },
-                  icon: const Icon(
-                    Icons.notifications,
-                    color: Colors.black, // Set icon color to black
-                    size: 35, // Set icon size
-                  ),
-                )
-              ],
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: CustomAppBar(
+        title: "Cart",
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.pushNamed(AppRoute.manageOrder.name);
+            },
+            icon: const Icon(
+              Icons.notifications,
+              color: Colors.black, // Set icon color to black
+              size: 35, // Set icon size
             ),
-            body: SafeArea(
+          )
+        ],
+      ),
+      body: BlocConsumer<CartBloc, CartState>(
+        listener: (context, state) {
+          if (state is CartFailure) {}
+        },
+        builder: (context, state) {
+          if (state is CartLoading) {
+            return const Center(child: Loader(size: 50.0, color: Colors.black));
+          } else if (state is GetCartSuccess) {
+            return SafeArea(
               child: Column(
                 children: [
                   Expanded(
@@ -81,16 +93,39 @@ class _CartScreenState extends State<CartScreen> {
                           _buildSummaryRow(
                               "Subtotal", '${getTotal(state.cart)} VND'),
                           const SizedBox(height: 10),
-                          _buildSummaryRow("Shipping", "30000 VND"),
+                          _buildSummaryRow("Shipping", "0 VND"),
                           const SizedBox(height: 10),
                           Container(
                             height: 1,
                             color: Colors.black,
                           ),
                           const SizedBox(height: 10),
-                          _buildSummaryRow(
-                              "Total", "${getTotal(state.cart) + 30000} VND",
-                              fontSize: 25, fontWeight: FontWeight.bold),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              // Original price with strikethrough, shown only if there's a discount
+                              if (_selectedVoucher != null &&
+                                  _selectedVoucher!.discount > 0)
+                                Text(
+                                  "${getTotal(state.cart).toStringAsFixed(2)} VND",
+                                  style: const TextStyle(
+                                    fontFamily: 'Schyler',
+                                    fontSize: 23,
+                                    color: Colors.grey,
+                                    decoration: TextDecoration
+                                        .lineThrough, // Strikethrough
+                                  ),
+                                ),
+
+                              // Discounted total
+                              _buildSummaryRow(
+                                "Total",
+                                "${double.parse((getTotal(state.cart) * (1 - (_selectedVoucher?.discount ?? 0))).toStringAsFixed(2)).toInt()} VND",
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ],
+                          )
                         ],
                       ),
                     ),
@@ -103,18 +138,40 @@ class _CartScreenState extends State<CartScreen> {
                         height: 1,
                       ),
                       InkWell(
-                        onTap: () {
-                          context.pushNamed(AppRoute.voucher.name);
+                        onTap: () async {
+                          final result = await context.pushNamed(
+                              AppRoute.voucher.name,
+                              extra: _selectedIndex ?? -1);
+
+                          if (result != null && result is VoucherArgs) {
+                            setState(() {
+                              _selectedVoucher = result.voucher;
+                              _selectedIndex = result.index;
+                            });
+
+                            if (_selectedVoucher != null &&
+                                _selectedVoucher!.minCost >
+                                    getTotal(state.cart)) {
+                              showSnackBar(
+                                  // ignore: use_build_context_synchronously
+                                  context,
+                                  'Does not satisfy the condition');
+                              setState(() {
+                                _selectedVoucher = null;
+                                _selectedIndex = null;
+                              });
+                            }
+                          }
                         },
-                        child: const SizedBox(
+                        child: SizedBox(
                           height: 50,
                           child: Padding(
-                            padding: EdgeInsets.only(left: 20, right: 20),
+                            padding: const EdgeInsets.only(left: 20, right: 20),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Row(
+                                const Row(
                                   children: [
                                     Icon(Icons.local_offer),
                                     SizedBox(
@@ -126,11 +183,14 @@ class _CartScreenState extends State<CartScreen> {
                                         color: Colors.black),
                                   ],
                                 ),
-                                Row(
-                                  children: [
-                                    Icon(Icons.arrow_forward),
-                                  ],
-                                )
+                                _selectedVoucher != null
+                                    ? TextCustom(
+                                        text:
+                                            '-${_selectedVoucher!.discount * 100}%',
+                                        fontSize: 26,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black)
+                                    : const Icon(Icons.arrow_forward)
                               ],
                             ),
                           ),
@@ -142,7 +202,8 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                       InkWell(
                         onTap: () {
-                          context.pushNamed(AppRoute.checkout.name);
+                          context.pushNamed(AppRoute.checkout.name,
+                              extra: _selectedVoucher?.voucherCode ?? '');
                         },
                         child: Container(
                           color: Colors.black,
@@ -164,44 +225,46 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 ],
               ),
+            );
+          } else if (state is DeleteCartSuccess) {
+            context.read<CartBloc>().add(GetCartEvent());
+          } else if (state is UpdateCartSuccess) {
+            context.read<CartBloc>().add(GetCartEvent());
+          } else if (state is CartFailure) {}
+          return Container(
+            color: Colors.white,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    "assets/cart/shopping_cart.png",
+                    width: 150.0, // Set the width
+                    height: 150.0, // Set the height
+                  ),
+                  const SizedBox(
+                    height: 35,
+                  ),
+                  const TextCustom(
+                    text: "Your Cart is empty",
+                    fontSize: 35,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  const TextCustom(
+                    text: "Continue Shopping",
+                    fontSize: 25,
+                    color: Colors.black,
+                  ),
+                ],
+              ),
             ),
           );
-        } else if (state is DeleteCartSuccess) {
-          context.read<CartBloc>().add(GetCartEvent());
-        } else if (state is CartFailure) {}
-        return Container(
-          color: Colors.white,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  "assets/cart/shopping_cart.png",
-                  width: 150.0, // Set the width
-                  height: 150.0, // Set the height
-                ),
-                const SizedBox(
-                  height: 35,
-                ),
-                const TextCustom(
-                  text: "Your Cart is empty",
-                  fontSize: 35,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                const TextCustom(
-                  text: "Continue Shopping",
-                  fontSize: 25,
-                  color: Colors.black,
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 }
@@ -235,17 +298,19 @@ class CartCount extends StatefulWidget {
 }
 
 class _CartCountState extends State<CartCount> {
-  late int quantity = widget.cart.quantity;
+  late int quantity = int.parse(widget.cart.quantity);
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<CartBloc, CartState>(
       listener: (context, state) {
         if (state is DeleteCartSuccess) {
-          // Immediately fetch the updated cart after deletion
-          context
-              .read<CartBloc>()
-              .add(GetCartEvent()); // Trigger to reload cart
+          context.read<CartBloc>().add(GetCartEvent());
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: TextCustom(
@@ -256,7 +321,6 @@ class _CartCountState extends State<CartCount> {
             ),
           );
         } else if (state is CartFailure) {
-          // Show error if the delete failed
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: TextCustom(
@@ -312,29 +376,30 @@ class _CartCountState extends State<CartCount> {
                         IconButton(
                           icon: const Icon(Icons.remove, color: Colors.white),
                           onPressed: () {
-                            setState(() {
-                              if (quantity > 0) quantity--;
-                              if (quantity == 0) {
-                                Navigator.of(context).pop();
-                              }
-                            });
+                            if (quantity > 1) {
+                              setState(() {
+                                quantity--;
+                                _updateQuantity(quantity);
+                              });
+                            } else {
+                              _showAlertDialog(context, widget.cart.bookItem!);
+                            }
                           },
                         ),
-                        const SizedBox(width: 5),
                         TextCustom(
                           text: '$quantity',
                           color: Colors.white,
                           fontSize: 25,
                         ),
-                        const SizedBox(width: 5),
                         IconButton(
                           icon: const Icon(Icons.add, color: Colors.white),
                           onPressed: () {
                             setState(() {
                               quantity++;
+                              _updateQuantity(quantity);
                             });
                           },
-                        )
+                        ),
                       ],
                     ),
                     const Spacer(),
@@ -351,9 +416,7 @@ class _CartCountState extends State<CartCount> {
                     children: [
                       InkWell(
                         onTap: () {
-                          // Trigger the delete event
-                          context.read<CartBloc>().add(DeleteCartEvent(
-                              id: widget.cart.bookItem!.bookId));
+                          _showAlertDialog(context, widget.cart.bookItem!);
                         },
                         child: const Icon(
                           Icons.close,
@@ -377,12 +440,58 @@ class _CartCountState extends State<CartCount> {
       ),
     );
   }
+
+  void _updateQuantity(int quantity) {
+    context.read<CartBloc>().add(UpdateItemEvent(
+          widget.cart.bookItem?.bookId ?? '',
+          quantity,
+        ));
+  }
 }
 
 double getTotal(List<CartItem> cart) {
   double total = 0.0;
   for (var item in cart) {
-    total += item.total;
+    total += double.parse(item.total);
   }
   return total;
+}
+
+void _showAlertDialog(BuildContext context, BookItem item) {
+  showDialog(
+      context: context,
+      // ignore: avoid_types_as_parameter_names
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: const BorderSide(color: Colors.black, width: 2),
+          ),
+          backgroundColor: Colors.white,
+          title: const TextCustom(
+              text: "Alert!", fontSize: 25, color: Colors.black),
+          content: const TextCustom(
+              text: "Are you sure to delete this items",
+              fontSize: 20,
+              color: Colors.black),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+                child: const TextCustom(
+                    text: "Cancel", fontSize: 20, color: Colors.red)),
+            TextButton(
+                onPressed: () {
+                  context
+                      .read<CartBloc>()
+                      .add(DeleteCartEvent(id: item.bookId));
+
+                  Navigator.of(context).pop();
+                },
+                child: const TextCustom(
+                    text: "Confirm", fontSize: 20, color: Colors.black)),
+          ],
+        );
+      });
 }

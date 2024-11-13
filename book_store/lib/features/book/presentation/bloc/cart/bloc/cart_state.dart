@@ -29,6 +29,11 @@ final class DeleteCartSuccess extends CartState {
 
 final class CartLoading extends CartState {}
 
+final class UpdateCartSuccess extends CartState {
+  final String? message;
+  const UpdateCartSuccess(this.message);
+}
+
 final class CartFailure extends CartState {
   final String? message;
 

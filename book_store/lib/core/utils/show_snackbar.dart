@@ -8,7 +8,7 @@ void showSnackBar(BuildContext context, String? content,
   }
 
   final snackBar = SnackBar(
-    content: TextCustom(text: content, fontSize: 25, color: Colors.white),
+    content: TextCustom(text: content, fontSize: 20, color: Colors.white),
     duration: const Duration(
         seconds: 3), // Specify how long the snackbar should be displayed
     action: actionLabel != null && action != null

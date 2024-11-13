@@ -20,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late final PageController pageController;
   int pageNo = 0;
+  String? token;
 
   Timer? carouselTimer;
 
@@ -46,7 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-
+    // getToken();
+    // print(getToken());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final state = context.read<HomeBloc>().state;
       if (state is! HomeSuccess) {
@@ -256,6 +258,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           itemBuilder: (_, index) {
                             return GestureDetector(
                               onTap: () {
+                                // print("heheh");
+                                // print(getToken().toString());
                                 context.pushNamed(
                                   AppRoute.detailBook.name,
                                   extra: UserBookArgs(

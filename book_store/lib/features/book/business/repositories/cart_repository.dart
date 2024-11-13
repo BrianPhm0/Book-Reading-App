@@ -9,4 +9,6 @@ abstract interface class CartRepository {
 
   Future<Either<Failure, List<CartItem>>> getCart();
   Future<Either<Failure, String>> deleteCart(String id);
+
+  Future<Either<Failure, String>> updateItem(String id, int quantity);
 }

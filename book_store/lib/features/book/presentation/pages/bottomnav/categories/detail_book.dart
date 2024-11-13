@@ -106,7 +106,7 @@ class _DetailBookState extends State<DetailBook> {
                                     // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
                                       TextCustom(
-                                        text: 'Author: ${detail.author}',
+                                        text: 'Author: ${detail.authorName}',
                                         fontSize: 19,
                                         color: Colors.black,
                                         maxLines: 2,
@@ -157,7 +157,42 @@ class _DetailBookState extends State<DetailBook> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 10),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: InkWell(
+                                onTap: () {
+                                  context.pushNamed(AppRoute.claimVoucher.name);
+                                },
+                                child: const Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(Icons.local_offer),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        TextCustom(
+                                            text: 'Claim vouchers !',
+                                            fontSize: 20,
+                                            color: Colors.black),
+                                      ],
+                                    ),
+                                    Icon(Icons.arrow_forward),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Container(
+                              height: 1,
+                              color: Colors.grey,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
                             const TabBar(
                                 indicatorColor: Colors.black,
                                 labelColor: Colors.black,
@@ -331,7 +366,7 @@ class _QuantitySelectorState extends State<QuantitySelector> {
         }
       },
       child: Container(
-        height: 400,
+        height: 500,
         width: double.infinity,
         padding: const EdgeInsets.all(20),
         decoration: const BoxDecoration(
@@ -500,8 +535,8 @@ class _QuantitySelectorState extends State<QuantitySelector> {
                           context
                               .read<CartBloc>()
                               .add(PostCartEvent(widget.book.bookId, quantity));
-                          context.pushNamed(AppRoute.cart.name);
-                          Navigator.of(context).pop();
+                          GoRouter.of(context).pushNamed(AppRoute.cart.name);
+                          Navigator.of(context).pop(); // 3 for Cart tab
                         },
                         child: Container(
                           decoration: BoxDecoration(

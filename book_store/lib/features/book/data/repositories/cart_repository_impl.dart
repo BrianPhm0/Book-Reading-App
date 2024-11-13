@@ -52,4 +52,17 @@ class CartRepositoryImpl implements CartRepository {
       return left(Failure(e.message));
     }
   }
+
+  @override
+  Future<Either<Failure, String>> updateItem(String id, int quantity) async {
+    try {
+      final res = await cartRemoteDataSource.updateItem(id, quantity);
+      if (res.isNotEmpty) {
+        return right(res);
+      }
+      return left(Failure("Cant update item from Cart"));
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
 }

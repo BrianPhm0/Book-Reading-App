@@ -1,4 +1,5 @@
 class ApiConfig {
+  // static const String baseUrl = 'http://10.0.2.2:7274/api';
   static const String baseUrl = 'http://localhost:7274/api';
 
   //register
@@ -48,6 +49,20 @@ class ApiConfig {
 
   static const String detailBook = '$baseUrl/Book/';
   //get review ebook
-
   static const String review = '$baseUrl/Review/';
+
+  //get voucher
+  static const String voucher = '$baseUrl/Voucher/user';
+
+  //update item
+  static const String updateItem = '$baseUrl/CartItem/update?productId=';
+
+  //get public voucher
+  static const String getPublicVoucher = '$baseUrl/Voucher/of-mobile';
+
+  //add voucher
+  static const String addVoucher = '$baseUrl/VoucherUser/code';
+
+  //get order
+  static const String getOrder = '$baseUrl/Orders/user?page=1&size=10';
 }

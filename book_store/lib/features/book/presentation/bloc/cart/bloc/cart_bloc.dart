@@ -4,6 +4,7 @@ import 'package:book_store/features/book/business/entities/cart/cart.dart';
 import 'package:book_store/features/book/business/usecases/cart/delete_cart.dart';
 import 'package:book_store/features/book/business/usecases/cart/get_cart.dart';
 import 'package:book_store/features/book/business/usecases/cart/post_cart_item.dart';
+import 'package:book_store/features/book/business/usecases/cart/update_item.dart';
 import 'package:equatable/equatable.dart';
 
 part 'cart_event.dart';
@@ -14,72 +15,93 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   final PostCartItem _postCartItem;
   final GetCart _getCart;
   final DeleteCart _deleteCart;
+  final UpdateItem _updateItem;
 
   CartBloc(
       {required PostCartItem postCartItem,
       required GetCart getCart,
+      required UpdateItem updateItem,
       required DeleteCart deleteCart})
       : _postCartItem = postCartItem,
         _getCart = getCart,
         _deleteCart = deleteCart,
+        _updateItem = updateItem,
         super(CartInitial()) {
     on<CartEvent>((event, emit) {});
     on<PostCartEvent>(_onPostCartEvent);
     on<GetCartEvent>(_onGetCartEvent);
     on<DeleteCartEvent>(_onDeleteCartEvent);
+    on<UpdateItemEvent>(_onUpdateItemEvent);
   }
 
-  Future<String> _onPostCartEvent(
-      PostCartEvent event, Emitter<CartState> emit) async {
+  void _onPostCartEvent(PostCartEvent event, Emitter<CartState> emit) async {
     emit(CartLoading());
 
     final res = await _postCartItem(
         PostCartItemParams(id: event.id, quantity: event.quantity));
 
-    return res.fold(
+    res.fold(
+      // ignore: void_checks
       (failure) {
         emit(CartFailure(failure.message));
         return failure.message; // Return failure message as a String
       },
+      // ignore: void_checks
       (r) {
-        emit(PostCartSuccess(r));
-        return "Success"; // Return success message or data as a String
+        return emit(PostCartSuccess(r));
       },
     );
   }
 
-  Future<String> _onGetCartEvent(
-      GetCartEvent event, Emitter<CartState> emit) async {
+  void _onGetCartEvent(GetCartEvent event, Emitter<CartState> emit) async {
     emit(CartLoading());
 
     final res = await _getCart(NoParams());
 
-    return res.fold(
+    res.fold(
+      // ignore: void_checks
       (failure) {
         emit(CartFailure(failure.message));
         return failure.message; // Return failure message as a String
       },
+      // ignore: void_checks
       (r) {
-        emit(GetCartSuccess(r));
-        return "Success"; // Return success message or data as a String
+        return emit(GetCartSuccess(r));
       },
     );
   }
 
-  Future<String> _onDeleteCartEvent(
+  void _onUpdateItemEvent(
+      UpdateItemEvent event, Emitter<CartState> emit) async {
+    emit(CartLoading());
+
+    final res = await _updateItem(
+        UpdateItemParams(id: event.id, quantity: event.quantity));
+
+    res.fold(
+      (failure) {
+        emit(CartFailure(failure.message));
+      },
+      (r) {
+        return emit(UpdateCartSuccess(r));
+      },
+    );
+  }
+
+  void _onDeleteCartEvent(
       DeleteCartEvent event, Emitter<CartState> emit) async {
     emit(CartLoading());
 
     final res = await _deleteCart(DeleteCartParams(id: event.id));
 
-    return res.fold(
+    res.fold(
+      // ignore: void_checks
       (failure) {
         emit(CartFailure(failure.message));
-        return failure.message; // Return failure message as a String
       },
+      // ignore: void_checks
       (r) {
-        emit(DeleteCartSuccess(r));
-        return "Success"; // Return success message or data as a String
+        return emit(DeleteCartSuccess(r));
       },
     );
   }
