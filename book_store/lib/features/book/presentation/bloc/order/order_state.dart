@@ -22,3 +22,11 @@ final class GetOrderSuccess extends OrderState {
 
   const GetOrderSuccess(this.order);
 }
+
+final class GetOrderIdSuccess extends OrderState {
+  final List<OrderId> order;
+
+  const GetOrderIdSuccess(this.order);
+}
+
+final class CancelOrderSuccess extends OrderState {}

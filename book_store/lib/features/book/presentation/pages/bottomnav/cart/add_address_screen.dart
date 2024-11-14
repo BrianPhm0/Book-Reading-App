@@ -60,6 +60,7 @@ class _AddAddressState extends State<AddAddressScreen> {
     return BlocListener<AddressBloc, AddressState>(
       listener: (context, state) {
         if (state is SaveAddressSuccess) {
+          context.read<AddressBloc>().add(GetAddressEvent());
           Navigator.of(context).pop();
         } else if (state is AddressFail) {}
       },

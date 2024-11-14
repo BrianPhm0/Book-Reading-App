@@ -142,15 +142,31 @@ class _DetailBookState extends State<DetailBook> {
                                       const SizedBox(
                                         height: 5,
                                       ),
-                                      CustomButton(
-                                        rectangle: 5,
-                                        size: 20,
-                                        backgroundColor: Colors.white,
-                                        textColor: Colors.black,
-                                        name: 'HardCover',
-                                        onPressed: () {
-                                          _showBottomDialog(context, detail);
-                                        },
+                                      (int.tryParse(detail.quantity ?? "0") ??
+                                                  0) <=
+                                              0
+                                          ? CustomButton(
+                                              rectangle: 5,
+                                              size: 20,
+                                              name: 'Out of Stock',
+                                              borderColor: Colors.grey,
+                                              backgroundColor: Colors.white,
+                                              textColor: Colors.grey,
+                                              onPressed: () {},
+                                            )
+                                          : CustomButton(
+                                              rectangle: 5,
+                                              size: 20,
+                                              backgroundColor: Colors.white,
+                                              textColor: Colors.black,
+                                              name: 'HardCover',
+                                              onPressed: () {
+                                                _showBottomDialog(
+                                                    context, detail);
+                                              },
+                                            ),
+                                      const SizedBox(
+                                        height: 5,
                                       ),
                                     ],
                                   ),
@@ -265,8 +281,8 @@ class _DetailBookState extends State<DetailBook> {
           Icons.account_circle,
           size: 55,
         ),
-        title:
-            TextCustom(text: review.email, fontSize: 20, color: Colors.black),
+        title: TextCustom(
+            text: review.fullName, fontSize: 20, color: Colors.black),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -282,9 +298,7 @@ class _DetailBookState extends State<DetailBook> {
                 Icons.star,
                 color: Colors.black,
               ),
-              onRatingUpdate: (rating) {
-                print(rating);
-              },
+              onRatingUpdate: (rating) {},
             ),
             TextCustom(text: review.comment, fontSize: 18, color: Colors.black),
           ],
@@ -398,21 +412,25 @@ class _QuantitySelectorState extends State<QuantitySelector> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      widget.book.typeBookId == '2'
+                          ? const TextCustom(
+                              text: "",
+                              fontSize: 20,
+                              color: Colors.black,
+                            )
+                          : TextCustom(
+                              text: "Inventory: ${widget.book.quantity}",
+                              fontSize: 20,
+                              color: Colors.black,
+                            ),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       FittedBox(
                         child: TextCustom(
                             text: "Pricing: ${widget.book.price} VND",
                             fontSize: 25,
                             color: Colors.black),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      TextCustom(
-                          text: "Inventory: ${widget.book.quantity}",
-                          fontSize: 20,
-                          color: Colors.black),
-                      const SizedBox(
-                        height: 15,
                       ),
                     ],
                   ),

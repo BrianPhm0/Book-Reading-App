@@ -8,6 +8,7 @@ class CustomeTextfield extends StatelessWidget {
   final bool? obscureText;
   final TextInputType inputType;
   final FormFieldValidator<String>? validator;
+  final double? fontSize;
 
   const CustomeTextfield(
       {super.key,
@@ -17,7 +18,8 @@ class CustomeTextfield extends StatelessWidget {
       required this.controller,
       this.suffix,
       this.obscureText,
-      this.prefix});
+      this.prefix,
+      this.fontSize});
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +30,8 @@ class CustomeTextfield extends StatelessWidget {
       maxLines: 1,
       keyboardType: inputType,
       validator: validator,
-      style: const TextStyle(
-          fontFamily: 'Schyler', fontSize: 18, color: Colors.black),
+      style: TextStyle(
+          fontFamily: 'Schyler', fontSize: fontSize ?? 18, color: Colors.black),
       decoration: InputDecoration(
         prefix: prefix,
         suffixIcon: suffix,

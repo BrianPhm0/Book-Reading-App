@@ -12,3 +12,11 @@ final class GetDetailEvent extends DetailEvent {
 
   const GetDetailEvent(this.id);
 }
+
+final class PostReviewEvent extends DetailEvent {
+  final String id;
+  final String rating;
+  final String comment;
+
+  const PostReviewEvent(this.id, this.rating, this.comment);
+}

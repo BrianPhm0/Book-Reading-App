@@ -2,12 +2,12 @@
 import 'package:book_store/core/common/cubits/cubit/user_cubit.dart';
 import 'package:book_store/features/book/presentation/bloc/address/address_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/auth/auth_bloc.dart';
+import 'package:book_store/features/book/presentation/bloc/order/order_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/book/bloc/category/book_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/book/bloc/home/home_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/cart/bloc/cart_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/check/check_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/detail/detail_bloc.dart';
-import 'package:book_store/features/book/presentation/bloc/order/order_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/voucher/voucher_bloc.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/init_dependencies.dart';

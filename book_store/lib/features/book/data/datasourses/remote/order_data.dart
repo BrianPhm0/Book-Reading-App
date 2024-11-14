@@ -2,14 +2,15 @@ import 'dart:convert';
 
 import 'package:book_store/api_config.dart';
 import 'package:book_store/core/error/exceptions.dart';
-import 'package:book_store/features/book/business/entities/order/order_item.dart';
-import 'package:book_store/features/book/business/entities/voucher/voucher.dart';
+import 'package:book_store/features/book/data/model/order/order_id_model.dart';
 import 'package:book_store/features/book/data/model/order/order_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 abstract interface class OrderData {
   Future<Map<String, List<OrderModel>>> getOrder();
+  Future<List<OrderIdModel>> getOrderById(String id);
+  Future<void> cancelOrder(String id);
 }
 
 Future<String?> getToken() async {
@@ -56,6 +57,61 @@ class OrderDataImpl implements OrderData {
             'completed': [],
           };
         }
+      } else {
+        throw Exception('Failed to load data. Status code: ${res.statusCode}');
+      }
+    } catch (e) {
+      throw ServerException('Error: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<List<OrderIdModel>> getOrderById(String id) async {
+    final url = Uri.parse('${ApiConfig.getOrderById}$id');
+
+    final token = await getToken();
+
+    final headers = {'accept': '*/*', 'Authorization': 'Bearer $token'};
+
+    try {
+      final res = await http.get(url, headers: headers);
+
+      if (res.statusCode == 200) {
+        final data = json.decode(res.body);
+
+        if (data['orderItems'] is List) {
+          final List<dynamic> items = data['orderItems'];
+          // print(items);
+          // Map JSON data to a list of OrderModel
+          List<OrderIdModel> list = items.map((json) {
+            return OrderIdModel.fromJson(json);
+          }).toList();
+
+          return list;
+        } else {
+          throw Exception(
+              'Failed to load data. Status code: ${res.statusCode}');
+        }
+      } else {
+        throw Exception('Failed to load data. Status code: ${res.statusCode}');
+      }
+    } catch (e) {
+      throw ServerException('Error: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> cancelOrder(String id) async {
+    final url = Uri.parse('${ApiConfig.cancelOrder}$id');
+
+    final token = await getToken();
+
+    final headers = {'accept': '*/*', 'Authorization': 'Bearer $token'};
+
+    try {
+      final res = await http.put(url, headers: headers);
+
+      if (res.statusCode == 200) {
       } else {
         throw Exception('Failed to load data. Status code: ${res.statusCode}');
       }

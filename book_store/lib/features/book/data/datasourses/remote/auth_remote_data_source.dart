@@ -29,6 +29,14 @@ abstract class AuthRemoteDataSource {
     required String password,
   });
 
+  Future<void> updateUser(
+    String id,
+    String email,
+    String phone,
+    String fullName,
+    String address,
+  );
+
   Future<UserModel?> getCurrentUserData();
 
   Future<UserModel?> getUser();
@@ -267,6 +275,40 @@ class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
       await firebaseAuth.signOut();
     } catch (e) {
       throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<void> updateUser(String id, String email, String phone,
+      String fullName, String address) async {
+    final url = Uri.parse('${ApiConfig.updateUser}$id');
+    final token = await getToken();
+
+    final headers = {
+      'accept': '*/*',
+      'Content-Type': 'application/json-patch+json',
+      'Authorization': 'Bearer $token'
+    };
+
+    final body = jsonEncode({
+      'email': email,
+      'phone': phone,
+      'fullname': fullName,
+      'address': address,
+    });
+
+    try {
+      final response = await http.put(url, headers: headers, body: body);
+      print(response.body);
+
+      // print(response.statusCode);
+      if (response.statusCode == 200) {
+        print('haha');
+      } else {
+        throw Exception("Login failed: Invalid credentials or server error");
+      }
+    } catch (e) {
+      throw Exception("Login failed: $e");
     }
   }
 }

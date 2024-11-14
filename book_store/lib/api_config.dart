@@ -65,4 +65,19 @@ class ApiConfig {
 
   //get order
   static const String getOrder = '$baseUrl/Orders/user?page=1&size=10';
+
+  //get order by id
+  static const String getOrderById = '$baseUrl/Orders/';
+
+  //get order by id
+  static const String cancelOrder = '$baseUrl/Orders/cancel-status?id=';
+
+//get order by id
+  static const String postReview = '$baseUrl/Review';
+
+  //search book
+  static const String searchBook = '$baseUrl/Book/search?';
+
+  //update user
+  static const String updateUser = '$baseUrl/User?id=';
 }

@@ -31,4 +31,12 @@ abstract interface class AuthRepository {
     required String name,
     required String password,
   });
+
+  Future<Either<Failure, void>> updateUser(
+    String id,
+    String email,
+    String phone,
+    String fullName,
+   String address,
+  );
 }

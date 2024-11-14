@@ -3,7 +3,8 @@ import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-void showDialogForget(BuildContext context, String name) {
+void showDialogAuth(
+    BuildContext context, String? name, String? title, String? content) {
   showDialog(
     context: context,
     builder: (context) {
@@ -22,7 +23,12 @@ void showDialogForget(BuildContext context, String name) {
             color: Colors.black),
         actions: [
           TextButton(
-              onPressed: () => context.goNamed(name), // Close the dialog
+              onPressed: () {
+                if (name != null && name.isNotEmpty) {
+                  context.goNamed(name);
+                }
+                Navigator.of(context).pop();
+              },
               child: const TextCustom(
                   text: "Done", fontSize: 25, color: Colors.blue)),
         ],

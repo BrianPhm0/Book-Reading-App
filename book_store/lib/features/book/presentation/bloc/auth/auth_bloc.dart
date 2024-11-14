@@ -2,6 +2,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:book_store/core/common/cubits/cubit/user_cubit.dart';
 import 'package:book_store/features/book/business/entities/user/user.dart';
+import 'package:book_store/features/book/business/usecases/user/update_user.dart';
 import 'package:book_store/features/book/business/usecases/user/user_current.dart';
 import 'package:book_store/features/book/business/usecases/user/user_forget_pass.dart';
 import 'package:book_store/features/book/business/usecases/user/user_get_user.dart';
@@ -25,6 +26,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserLoginJwt _userLoginJwt;
   final UserTokenCurrent _tokenCurrent;
   final GetUser _getUser;
+  final UpdateUser _updateUser;
   //handle the use case
   AuthBloc(
       {required UserSignUp userSignUp,
@@ -35,6 +37,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       required UserCubit userCubit,
       required UserTokenCurrent tokenCurrent,
       required GetUser getUser,
+      required UpdateUser updateUser,
       required UserLoginJwt userLoginJwt})
       : _userSignUp = userSignUp,
         _userLogin = userLogin,
@@ -44,6 +47,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _userCubit = userCubit,
         _userLoginJwt = userLoginJwt,
         _tokenCurrent = tokenCurrent,
+        _updateUser = updateUser,
         _getUser = getUser,
         super(AuthInitial()) {
     on<AuthEvent>((_, emit) => emit(AuthLoading()));
@@ -55,6 +59,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthIsTokendIn>(_onAuthTokenUser);
     on<AuthLoginToken>(_onUserLoginJwt);
     on<AuthGetUser>(_onAuthGetUser);
+    on<UpdateUserEvent>(_onUpdateUser);
   }
 
   void _onAuthSignUp(AuthSignUp event, Emitter<AuthState> emit) async {
@@ -131,5 +136,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         UserLoginJwtParams(name: event.name, password: event.password));
     res.fold((failure) => emit(AuthFailure(failure.message)),
         (r) => emit(AuthTokenSuccess(r)));
+  }
+
+  void _onUpdateUser(UpdateUserEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    final res = await _updateUser(UpdateUserParams(
+        event.id, event.email, event.phone, event.fullName, event.address));
+    res.fold((failure) => emit(AuthFailure(failure.message)),
+        (r) => emit(UpdateUserSuccess()));
   }
 }

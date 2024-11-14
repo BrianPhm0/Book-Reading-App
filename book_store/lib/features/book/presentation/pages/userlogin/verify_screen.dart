@@ -1,25 +1,28 @@
 import 'package:book_store/core/common/widgets/dialog.dart';
 import 'package:book_store/core/common/widgets/loader.dart';
 import 'package:book_store/core/utils/show_snackbar.dart';
+import 'package:book_store/features/book/business/entities/user/user_args.dart';
 import 'package:book_store/features/book/presentation/bloc/auth/auth_bloc.dart';
 
 import 'package:book_store/features/book/presentation/providers/handleSubmit.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
 import 'package:book_store/features/book/presentation/widgets/custom_button.dart';
+import 'package:book_store/features/book/presentation/widgets/custom_text_button.dart';
 import 'package:book_store/features/book/presentation/widgets/custome_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ForgotPass extends StatefulWidget {
-  const ForgotPass({super.key});
+class VerifyScreen extends StatefulWidget {
+  final UserArgs userArgs;
+  const VerifyScreen({super.key, required this.userArgs});
 
   @override
-  State<ForgotPass> createState() => _ForgotPassState();
+  State<VerifyScreen> createState() => _ForgotPassState();
 }
 
-class _ForgotPassState extends State<ForgotPass> {
-  final emailController = TextEditingController();
+class _ForgotPassState extends State<VerifyScreen> {
+  final verifyController = TextEditingController();
   //form key
   late FormHandler _formHandler;
 
@@ -28,13 +31,17 @@ class _ForgotPassState extends State<ForgotPass> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialogAuth(context, '', 'Verification Code Sent',
+          'A code has been sent to your email. Check your inbox (or spam folder) and enter the code below to continue.\nDidn’t get it? Wait a moment, then tap "Resend Code."'); // Customize your dialog message here
+    });
 
     _formHandler = FormHandler(formKey: formKey, controllers: [
-      emailController
+      verifyController
     ], validators: [
       (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter your Email';
+          return 'Please enter verify code';
         }
         if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
           return 'This is not a valid email';
@@ -45,14 +52,13 @@ class _ForgotPassState extends State<ForgotPass> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: const CustomAppBar(
-          title: 'Forget Password',
+          title: 'Verify Account',
         ),
         body: SizedBox.expand(
           child: Stack(
@@ -64,13 +70,7 @@ class _ForgotPassState extends State<ForgotPass> {
                     listener: (context, state) {
                       if (state is AuthFailure) {
                         showSnackBar(context, state.message);
-                      } else if (state is AuthPasswordResetSuccess) {
-                        showDialogAuth(
-                            context,
-                            AppRoute.login.name,
-                            'Verification Code Sent',
-                            'A code has been sent to your email. Check your inbox (or spam folder) and enter the code below to continue.\nDidn’t get it? Wait a moment, then tap "Resend Code."');
-                      }
+                      } else if (state is AuthPasswordResetSuccess) {}
                     },
                     builder: (context, state) {
                       return Form(
@@ -79,20 +79,34 @@ class _ForgotPassState extends State<ForgotPass> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             CustomeTextfield(
-                              name: 'Email',
+                              name: 'Verify code',
                               inputType: TextInputType.emailAddress,
-                              controller: emailController,
+                              controller: verifyController,
                               obscureText: false,
                             ),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 5),
+                            Container(
+                              alignment: Alignment.centerRight,
+                              child: CustomTextButton(
+                                fontSize: 18,
+                                name: 'Resend code',
+                                onPressed: () {
+                                  showSnackBar(context,
+                                      'A new code has been sent to your email. Please check your inbox (or spam folder) shortly.');
+                                },
+                                underlineCheck: true,
+                              ),
+                            ),
+                            const SizedBox(height: 18),
                             SizedBox(
                               height: 50,
                               child: CustomButton(
+                                rectangle: 5,
                                 name: 'Submit',
                                 onPressed: () {
                                   _formHandler.submit(() {
                                     context.read<AuthBloc>().add(AuthResetPass(
-                                        email: emailController.text.trim()));
+                                        email: verifyController.text.trim()));
                                   });
                                 },
                               ),

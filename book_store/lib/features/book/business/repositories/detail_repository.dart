@@ -7,4 +7,6 @@ abstract interface class DetailRepository {
   Future<Either<Failure, BookItem>> getDetail(String id);
 
   Future<Either<Failure, List<Review>>> getReview(String id);
+  Future<Either<Failure, void>> postReview(
+      String id, String rating, String comment);
 }

@@ -13,6 +13,8 @@ abstract interface class BookRemoteDataSource {
   Future<List<BookItemModel>> getBooksByType(int bookTypeId);
   Future<List<BookItemModel>> getLatestBook();
   Future<List<BookItemModel>> getPurchaseEbook();
+  Future<List<BookItemModel>> searchEbook(
+      String? name, String? pageNumber, String? pageSize);
 }
 
 class BookRemoteDataSourceImpl implements BookRemoteDataSource {
@@ -153,6 +155,48 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
 
             return list;
             // print('Book List: $list'); // In ra danh sách sách
+          } else {
+            throw Exception(
+                'API response does not contain "items" as expected.');
+          }
+        } else {
+          List<BookItemModel> data = <BookItemModel>[];
+          return data;
+        }
+      } else {
+        throw ServerException(
+            'Failed to load books with status code: ${res.statusCode}');
+      }
+    } catch (e) {
+      // print('Error: $e'); // In lỗi để debug
+      throw ServerException(e.toString());
+    }
+  }
+
+  @override
+  Future<List<BookItemModel>> searchEbook(
+      String? name, String? pageNumber, String? pageSize) async {
+    final url = Uri.parse(
+        '${ApiConfig.searchBook}name=$name&pageNumber=$pageNumber&pageSize=$pageSize');
+
+    final headers = {'accept': '*/*'};
+
+    try {
+      final res = await http.get(url, headers: headers);
+
+      if (res.statusCode == 200) {
+        final data = json.decode(res.body);
+
+        if (data.isNotEmpty) {
+          if (data['items'] is List) {
+            final List<dynamic> items =
+                data['items']; // Lấy danh sách items từ API
+
+            List<BookItemModel> list = items.map((bookJson) {
+              return BookItemModel.fromJson(bookJson);
+            }).toList();
+
+            return list;
           } else {
             throw Exception(
                 'API response does not contain "items" as expected.');

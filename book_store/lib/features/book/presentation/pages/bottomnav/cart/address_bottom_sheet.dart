@@ -102,7 +102,6 @@ class _AddressBottomSheetState extends State<AddressBottomSheet> {
                               name: "Add new address",
                               onPressed: () async {
                                 context.pushNamed(AppRoute.address.name);
-                                Navigator.pop(context);
                               },
                               textColor: Colors.black,
                               fontWeight: FontWeight.bold,

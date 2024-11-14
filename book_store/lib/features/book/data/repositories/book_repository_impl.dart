@@ -5,6 +5,7 @@ import 'package:book_store/features/book/business/entities/categorybook/book_typ
 // import 'package:book_store/features/book/business/repositories/book_repository.dart';
 import 'package:book_store/features/book/business/repositories/book_repository.dart';
 import 'package:book_store/features/book/data/datasourses/remote/book_remote_data_source.dart';
+import 'package:book_store/features/book/data/model/book_by_category/book_item_model.dart';
 
 import 'package:fpdart/src/either.dart';
 
@@ -58,6 +59,19 @@ class BookRepositoryImpl implements BookRepository {
   Future<Either<Failure, List<BookItem>>> getPurchaseEbook() async {
     try {
       final purchaseEbook = await bookRemoteDataSource.getPurchaseEbook();
+
+      return right(purchaseEbook);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<BookItemModel>>> searchEbook(
+      String? name, String? pageNumber, String? pageSize) async {
+    try {
+      final purchaseEbook =
+          await bookRemoteDataSource.searchEbook(name, pageNumber, pageSize);
 
       return right(purchaseEbook);
     } on ServerException catch (e) {

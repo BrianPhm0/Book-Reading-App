@@ -42,10 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
     ], validators: [
       (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter your Email';
-        }
-        if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-          return 'This is not a valid email';
+          return 'Please enter your Username';
         }
         return null;
       },
@@ -100,8 +97,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         CustomeTextfield(
                           obscureText: false,
                           controller: emailController,
-                          // validator: _formHandler.validators[0],
-                          name: 'Email',
+                          validator: _formHandler.validators[0],
+                          name: 'Username',
                           inputType: TextInputType.emailAddress,
                         ),
                         const SizedBox(height: 15),

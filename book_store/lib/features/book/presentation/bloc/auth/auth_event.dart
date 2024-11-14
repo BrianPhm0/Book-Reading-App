@@ -45,3 +45,14 @@ final class AuthIsUserLoggedIn extends AuthEvent {}
 final class AuthIsTokendIn extends AuthEvent {}
 
 final class AuthUserSignOut extends AuthEvent {}
+
+final class UpdateUserEvent extends AuthEvent {
+  final String id;
+  final String email;
+  final String phone;
+  final String fullName;
+  final String address;
+
+  const UpdateUserEvent(
+      this.id, this.email, this.phone, this.fullName, this.address);
+}

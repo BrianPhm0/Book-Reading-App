@@ -6,7 +6,7 @@ class ReviewModel extends Review {
   factory ReviewModel.fromJson(Map<String, dynamic> json) {
     return ReviewModel(
       json['comment'] ?? '',
-      json['fullName'] ?? '',
+      json['username'] ?? '',
       json['email'] ?? '',
       json['avatar'] ?? '',
       json['rating'] ?? 0,

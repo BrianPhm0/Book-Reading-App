@@ -47,3 +47,9 @@ final class BooksByTypeSuccess extends BookState {
 
   const BooksByTypeSuccess(this.booksByType);
 }
+
+final class SearchBookSuccess extends BookState {
+  final List<BookItem> searchBook;
+
+  const SearchBookSuccess(this.searchBook);
+}

@@ -1,8 +1,6 @@
 import 'package:book_store/core/common/widgets/loader.dart';
 import 'package:book_store/features/book/business/entities/order/order_item.dart';
-import 'package:book_store/features/book/presentation/bloc/book/bloc/home/home_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/order/order_bloc.dart';
-import 'package:book_store/features/book/presentation/pages/bottomnav/cart/review_page.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
 import 'package:flutter/material.dart';
@@ -119,7 +117,7 @@ class _ManageOrderState extends State<ManageOrder> {
   Widget buildStatus(BuildContext context, int index, OrderItem? order) {
     return GestureDetector(
       onTap: () {
-        context.pushNamed(AppRoute.detailStatus.name);
+        context.pushNamed(AppRoute.detailStatus.name, extra: order?.orderId);
       },
       child: Padding(
         padding: const EdgeInsets.all(15),
@@ -175,14 +173,6 @@ class _ManageOrderState extends State<ManageOrder> {
                       ),
                     ),
                   ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Container(
-                  height: 150.0,
-                  width: 1,
-                  color: Colors.grey,
                 ),
               ),
               Flexible(
@@ -221,7 +211,7 @@ class _ManageOrderState extends State<ManageOrder> {
   Widget buildHistory(BuildContext context, int index, OrderItem? order) {
     return GestureDetector(
       onTap: () {
-        context.pushNamed(AppRoute.detailStatus.name);
+        context.pushNamed(AppRoute.detailHistory.name, extra: order?.orderId);
       },
       child: Padding(
         padding: const EdgeInsets.all(15),
@@ -279,14 +269,6 @@ class _ManageOrderState extends State<ManageOrder> {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(10),
-                child: Container(
-                  height: 150.0,
-                  width: 1,
-                  color: Colors.grey,
-                ),
-              ),
               Flexible(
                 flex: 1,
                 child: Column(
@@ -296,7 +278,7 @@ class _ManageOrderState extends State<ManageOrder> {
                     TextCustom(
                       text: order?.status ?? '',
                       fontSize: 20,
-                      color: Colors.red,
+                      color: Colors.green,
                       fontWeight: FontWeight.bold,
                     ),
                     const SizedBox(
@@ -317,16 +299,6 @@ class _ManageOrderState extends State<ManageOrder> {
           ),
         ),
       ),
-    );
-  }
-
-  void _showReviewBookSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return const ReviewPage();
-      },
-      isScrollControlled: true,
     );
   }
 }

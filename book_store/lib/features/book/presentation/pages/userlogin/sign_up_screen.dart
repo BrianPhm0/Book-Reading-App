@@ -1,5 +1,7 @@
+import 'package:book_store/core/common/widgets/dialog.dart';
 import 'package:book_store/core/common/widgets/loader.dart';
 import 'package:book_store/core/utils/show_snackbar.dart';
+import 'package:book_store/features/book/business/entities/user/user_args.dart';
 import 'package:book_store/features/book/presentation/bloc/auth/auth_bloc.dart';
 
 import 'package:book_store/features/book/presentation/providers/handleSubmit.dart';
@@ -32,7 +34,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     ///Create handle object
@@ -191,11 +192,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               onPressed: () {
                                 FocusScope.of(context).unfocus();
                                 _formHandler.submit(() {
-                                  context.read<AuthBloc>().add(AuthSignUp(
-                                      email: emailController.text.trim(),
-                                      password: passController.text.trim(),
-                                      name: nameController.text.trim()));
-                                  // final formData = _formHandler.getFormData();
+                                  context.pushNamed(AppRoute.verify.name,
+                                      extra: UserArgs(
+                                          nameController.text.trim(),
+                                          emailController.text.trim(),
+                                          passController.text.trim()));
                                 });
                               },
                             ),

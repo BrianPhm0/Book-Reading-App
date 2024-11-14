@@ -22,3 +22,5 @@ final class DetailSuccess extends DetailState {
 
   const DetailSuccess(this.detailBook, this.review);
 }
+
+final class PostReviewSuccess extends DetailState {}

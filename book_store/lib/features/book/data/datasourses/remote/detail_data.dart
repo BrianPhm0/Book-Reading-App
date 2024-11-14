@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 abstract interface class DetailData {
   Future<BookItemModel> getDetail(String id);
   Future<List<ReviewModel>> getReview(String id);
+  Future<void> postReview(String id, String rating, String comment);
 }
 
 class DetailDataImpl implements DetailData {
@@ -48,7 +49,9 @@ class DetailDataImpl implements DetailData {
     try {
       final res = await http.get(url, headers: headers);
       if (res.statusCode == 200) {
+        
         final data = json.decode(res.body);
+        
 
         if (data.isNotEmpty) {
           final List<dynamic> items = data;
@@ -68,6 +71,39 @@ class DetailDataImpl implements DetailData {
       }
     } catch (e) {
       throw ServerException('Error: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<void> postReview(String id, String rating, String comment) async {
+    final url = Uri.parse(ApiConfig.postReview);
+
+    final token = await getToken();
+
+    try {
+      // Create a MultipartRequest instead of using http.post
+      final request = http.MultipartRequest('POST', url)
+        ..headers.addAll({
+          'accept': '*/*',
+          'Authorization': 'Bearer $token',
+        })
+        ..fields['Comment'] = comment
+        ..fields['BookId'] = id
+        ..fields['Rating'] = rating;
+
+      // Send the request
+      final streamedResponse = await request.send();
+
+      // Read the response
+      final res = await http.Response.fromStream(streamedResponse);
+
+      if (res.statusCode == 200) {
+      } else {
+        throw ServerException(
+            'Failed to add voucher with status code: ${res.statusCode}');
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
     }
   }
 }

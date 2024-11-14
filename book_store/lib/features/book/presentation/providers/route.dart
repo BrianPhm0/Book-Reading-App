@@ -1,13 +1,12 @@
 import 'package:book_store/features/book/business/entities/categorybook/book_type.dart';
+import 'package:book_store/features/book/business/entities/user/user_args.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/add_address_screen.dart';
-import 'package:book_store/features/book/presentation/pages/bottomnav/cart/cart.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/cart_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/claim_voucher_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/detail_history_order.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/detail_order_status.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/manage_order.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/payment_success_screen.dart';
-import 'package:book_store/features/book/presentation/pages/bottomnav/cart/voucher_args.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/cart/voucher_screen.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/categories/detail_book.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/categories/user_book_args.dart';
@@ -21,6 +20,7 @@ import 'package:book_store/features/book/presentation/pages/bottomnav/userAccoun
 import 'package:book_store/features/book/presentation/pages/userlogin/forgot_pass.dart';
 import 'package:book_store/features/book/presentation/pages/userlogin/login_screen.dart';
 import 'package:book_store/features/book/presentation/pages/userlogin/sign_up_screen.dart';
+import 'package:book_store/features/book/presentation/pages/userlogin/verify_screen.dart';
 
 import 'package:go_router/go_router.dart';
 
@@ -46,6 +46,7 @@ enum AppRoute {
   detailHistory,
   readingBook,
   claimVoucher,
+  verify
 }
 
 class AppRouter {
@@ -77,9 +78,7 @@ class AppRouter {
         path: '/bottomnav',
         name: AppRoute.bottomnav.name,
         builder: (context, state) {
-          final initialIndex =
-              state.extra as int? ?? 0; // Fallback to 0 if null
-          return BottomNavScreen(initialIndex: initialIndex);
+          return const BottomNavScreen();
         },
       ),
       GoRoute(
@@ -196,14 +195,16 @@ class AppRouter {
         path: '/history',
         name: AppRoute.detailHistory.name,
         builder: (context, state) {
-          return const DetailHistoryOrder();
+          final arg = state.extra as String;
+          return DetailHistoryOrder(id: arg);
         },
       ),
       GoRoute(
         path: '/status',
         name: AppRoute.detailStatus.name,
         builder: (context, state) {
-          return const DetailOrderStatus();
+          final arg = state.extra as String;
+          return DetailOrderStatus(id: arg);
         },
       ),
       GoRoute(
@@ -219,6 +220,18 @@ class AppRouter {
         name: AppRoute.claimVoucher.name, // Ensure this matches exactly
         builder: (context, state) {
           return const ClaimVoucherScreen();
+        },
+      ),
+
+      GoRoute(
+        path: '/verify',
+        name: AppRoute.verify.name,
+        builder: (context, state) {
+          final args = state.extra as UserArgs;
+
+          return VerifyScreen(
+            userArgs: args,
+          );
         },
       ),
     ],

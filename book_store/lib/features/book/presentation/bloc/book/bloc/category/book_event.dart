@@ -26,3 +26,11 @@ final class GetItemBook extends BookEvent {
 final class GetPurchaseBookEvent extends BookEvent {}
 
 final class GetLatestBookEvent extends BookEvent {}
+
+final class SearchBookEvent extends BookEvent {
+  final String? name;
+  final String? pageNumber;
+  final String? pageSize;
+
+  const SearchBookEvent(this.name, this.pageNumber, this.pageSize);
+}

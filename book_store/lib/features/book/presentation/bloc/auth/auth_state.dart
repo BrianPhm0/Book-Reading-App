@@ -35,4 +35,6 @@ final class AuthTokenSuccess extends AuthState {
 final class AuthPasswordResetSuccess extends AuthState {}
 
 final class AuthSignOutSuccess extends AuthState {}
+
+final class UpdateUserSuccess extends AuthState {}
 // final class AuthCurrUser extends AuthState {}

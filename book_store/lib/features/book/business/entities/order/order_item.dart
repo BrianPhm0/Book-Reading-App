@@ -15,12 +15,12 @@ class OrderItem extends Equatable {
   @override
   // TODO: implement props
   List<Object?> get props => [
-        this.orderId,
-        this.orderDate,
-        this.totalAmount,
-        this.status,
-        this.name,
-        this.phone,
-        this.address
+        orderId,
+        orderDate,
+        totalAmount,
+        status,
+        name,
+        phone,
+        address
       ];
 }

@@ -53,7 +53,8 @@ class _AccountScreenState extends State<AccountScreen> {
 
                 return _buildAccountContent(context, user);
               } else if (userState is AuthLoading) {
-                return const Loader();
+                return const Center(
+                    child: Loader(size: 50.0, color: Colors.black));
               } else {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   context.goNamed(AppRoute.login.name);
