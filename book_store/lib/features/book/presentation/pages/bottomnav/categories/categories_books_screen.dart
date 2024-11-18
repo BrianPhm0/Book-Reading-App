@@ -93,9 +93,9 @@ class _CategoriesBooksScreenState extends State<CategoriesBooksScreen> {
           return BlocConsumer<BookBloc, BookState>(
             listener: (context, state) {
               if (state is BookFailure) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.toString())),
-                );
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //   SnackBar(content: Text(state.toString())),
+                // );
               }
             },
             builder: (context, state) {
@@ -144,7 +144,8 @@ class _CategoriesBooksScreenState extends State<CategoriesBooksScreen> {
                         fontSize: 30,
                         color: Colors.black));
               }
-              return const Center(child: Text('Unknown state'));
+              return const Center(
+                  child: Loader(size: 50.0, color: Colors.black));
             },
           );
         },

@@ -56,3 +56,9 @@ final class UpdateUserEvent extends AuthEvent {
   const UpdateUserEvent(
       this.id, this.email, this.phone, this.fullName, this.address);
 }
+
+final class VerifyCodeEvent extends AuthEvent {
+  final String code;
+
+  const VerifyCodeEvent(this.code);
+}

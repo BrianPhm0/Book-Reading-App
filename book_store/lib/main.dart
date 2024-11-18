@@ -123,7 +123,7 @@ class _MyWidgetState extends State<MyWidget> {
       theme: _buildTheme(),
       debugShowCheckedModeBanner: false,
       routerConfig: AppRouter.router,
-      // routeInformationParser: AppRouter.router.routeInformationParser,
+      
       builder: (context, child) {
         return BlocListener<UserCubit, UserState>(
           listener: (context, state) {

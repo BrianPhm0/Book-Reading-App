@@ -51,8 +51,15 @@ enum AppRoute {
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/bottomnav',
     routes: <RouteBase>[
+      GoRoute(
+        path: '/bottomnav',
+        name: AppRoute.bottomnav.name,
+        builder: (context, state) {
+          return const BottomNavScreen();
+        },
+      ),
       GoRoute(
         path: '/login',
         name: AppRoute.login.name,
@@ -74,13 +81,7 @@ class AppRouter {
           return const SignUpScreen();
         },
       ),
-      GoRoute(
-        path: '/bottomnav',
-        name: AppRoute.bottomnav.name,
-        builder: (context, state) {
-          return const BottomNavScreen();
-        },
-      ),
+
       GoRoute(
         path: '/account',
         name: AppRoute.account.name,

@@ -10,10 +10,13 @@ abstract interface class AuthRepository {
     required String email,
     required String password,
   });
-
   Future<Either<Failure, User>> logInWithEmailPassword({
     required String email,
     required String password,
+  });
+
+  Future<Either<Failure, String?>> verifyCode({
+    required String email,
   });
 
   Future<Either<Failure, User>> getCurrentUser();
@@ -37,6 +40,6 @@ abstract interface class AuthRepository {
     String email,
     String phone,
     String fullName,
-   String address,
+    String address,
   );
 }

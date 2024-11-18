@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     // Set a timer to navigate to the login page after 3 seconds
     Timer(const Duration(seconds: 6), () {
-      context.goNamed(AppRoute.login.name);
+      context.goNamed(AppRoute.bottomnav.name);
     });
   }
 

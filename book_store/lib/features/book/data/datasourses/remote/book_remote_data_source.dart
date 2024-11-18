@@ -150,11 +150,10 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
             List<BookItemModel> list = items.map((bookJson) {
               return BookItemModel.fromJson(bookJson);
             }).toList();
-            // print(items[0]);
-            // print(list[0].description);
+           
 
             return list;
-            // print('Book List: $list'); // In ra danh sách sách
+           
           } else {
             throw Exception(
                 'API response does not contain "items" as expected.');
@@ -168,7 +167,7 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
             'Failed to load books with status code: ${res.statusCode}');
       }
     } catch (e) {
-      // print('Error: $e'); // In lỗi để debug
+      
       throw ServerException(e.toString());
     }
   }

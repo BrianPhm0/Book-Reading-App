@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:book_store/core/common/widgets/dialog.dart';
 import 'package:book_store/core/common/widgets/loader.dart';
 import 'package:book_store/features/book/business/entities/book_by_category/book_item.dart';
 import 'package:book_store/features/book/presentation/bloc/book/bloc/category/book_bloc.dart';

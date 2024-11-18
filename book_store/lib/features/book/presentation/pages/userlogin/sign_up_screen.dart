@@ -1,4 +1,3 @@
-import 'package:book_store/core/common/widgets/dialog.dart';
 import 'package:book_store/core/common/widgets/loader.dart';
 import 'package:book_store/core/utils/show_snackbar.dart';
 import 'package:book_store/features/book/business/entities/user/user_args.dart';

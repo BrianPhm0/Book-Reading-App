@@ -80,4 +80,7 @@ class ApiConfig {
 
   //update user
   static const String updateUser = '$baseUrl/User?id=';
+
+  //verify code
+  static const String verifyCode = '$baseUrl/Auth/check-mail?email=';
 }

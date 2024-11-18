@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:book_store/api_config.dart';
 import 'package:book_store/core/error/exceptions.dart';
+import 'package:book_store/features/book/data/datasourses/local/local_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:book_store/features/book/data/model/user/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
@@ -12,7 +13,9 @@ import 'package:shared_preferences/shared_preferences.dart'; // Import for loadi
 abstract class AuthRemoteDataSource {
   final firebase_auth.User? firebaseUser;
 
-  AuthRemoteDataSource(this.firebaseUser);
+  final LocalData localData;
+
+  AuthRemoteDataSource(this.firebaseUser, this.localData);
 
   Future<UserModel> signUpWithEmailPassword({
     required String name,
@@ -44,12 +47,15 @@ abstract class AuthRemoteDataSource {
   Future<String?> getToken();
   Future<void> resetPassword({required String email});
   Future<void> signOut();
+  Future<String?> verifyCode(String email);
 }
 
 class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
   final firebase_auth.FirebaseAuth firebaseAuth;
 
-  AuthRemoteDataSourceImple(this.firebaseAuth);
+  final LocalData localData;
+
+  AuthRemoteDataSourceImple(this.firebaseAuth, this.localData);
 
   @override
   firebase_auth.User? get firebaseUser => firebaseAuth.currentUser;
@@ -228,9 +234,7 @@ class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
 
         return user;
       } else {
-        // Ném ra lỗi nếu mã trạng thái không phải là 200
-        throw Exception(
-            'Failed to fetch user data. Status code: ${res.statusCode}');
+        return null;
       }
     } catch (e) {
       // Ném ra lỗi nếu có bất kỳ lỗi nào trong quá trình yêu cầu HTTP hoặc phân tích JSON
@@ -272,7 +276,9 @@ class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
   @override
   Future<void> signOut() async {
     try {
-      await firebaseAuth.signOut();
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('token');
+      // await firebaseAuth.signOut();
     } catch (e) {
       throw ServerException(e.toString());
     }
@@ -299,16 +305,46 @@ class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
 
     try {
       final response = await http.put(url, headers: headers, body: body);
-      print(response.body);
 
       // print(response.statusCode);
       if (response.statusCode == 200) {
-        print('haha');
       } else {
         throw Exception("Login failed: Invalid credentials or server error");
       }
     } catch (e) {
       throw Exception("Login failed: $e");
+    }
+  }
+
+  @override
+  Future<String?> verifyCode(String email) async {
+    final url = Uri.parse('${ApiConfig.verifyCode}$email');
+    final headers = {
+      'accept': '*/*',
+    };
+
+    try {
+      final response = await http.post(url, headers: headers);
+
+      // print(response.statusCode);
+      if (response.statusCode == 200) {
+        // print('haha');
+        final data = jsonDecode(response.body);
+        final token = data['token'] as String?;
+
+        print(token);
+
+        // Xử lý thành công
+        if (token != null) {
+          return token;
+        } else {
+          throw Exception("Fail to send verify code");
+        }
+      } else {
+        throw Exception("Fail to send verify code");
+      }
+    } catch (e) {
+      throw Exception("Fail to send verify code: $e");
     }
   }
 }

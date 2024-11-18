@@ -14,6 +14,7 @@ class ReadingBook extends StatefulWidget {
   const ReadingBook({super.key, required this.pdfPath});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ReadingBookState createState() => _ReadingBookState();
 }
 
@@ -64,7 +65,7 @@ class _ReadingBookState extends State<ReadingBook> {
               ),
             )
           : CustomAppBar(
-              title: 'Reading App',
+              title: 'Reading',
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {

@@ -24,7 +24,7 @@ class DetailDataImpl implements DetailData {
     final url = Uri.parse('${ApiConfig.detailBook}$id');
     final token = await getToken();
 
-    final headers = {'accept': '*/*', 'Authorization': 'Bearer $token'};
+    final headers = {'accept': '*/*'};
     try {
       final res = await http.get(url, headers: headers);
       if (res.statusCode == 200) {
@@ -43,20 +43,19 @@ class DetailDataImpl implements DetailData {
   @override
   Future<List<ReviewModel>> getReview(String id) async {
     final url = Uri.parse('${ApiConfig.review}$id');
-    final token = await getToken();
+    // final token = await getToken();
 
-    final headers = {'accept': '*/*', 'Authorization': 'Bearer $token'};
+    final headers = {'accept': '*/*'};
     try {
       final res = await http.get(url, headers: headers);
       if (res.statusCode == 200) {
-        
         final data = json.decode(res.body);
-        
 
         if (data.isNotEmpty) {
           final List<dynamic> items = data;
 
           List<ReviewModel> list = items.map((json) {
+            // print(ReviewModel.fromJson(json));
             return ReviewModel.fromJson(json);
           }).toList();
 

@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 abstract class LocalData {
   Future<void> saveAddress(String name, String phone, String address);
   Future<List<AddressModel>> getAddress();
+  Future<String?> getToken();
 }
 
 class LocalDataImpl implements LocalData {
@@ -36,5 +37,13 @@ class LocalDataImpl implements LocalData {
     final String encodedData =
         json.encode(currentAddresses.map((e) => e.toJson()).toList());
     await prefs.setString(_addressKey, encodedData);
+  }
+
+  @override
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token'); // Lấy token từ SharedPreferences
+
+    return token;
   }
 }

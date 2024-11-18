@@ -4,7 +4,6 @@ import 'package:book_store/core/utils/show_snackbar.dart';
 import 'package:book_store/features/book/business/entities/user/user.dart';
 import 'package:book_store/features/book/presentation/bloc/auth/auth_bloc.dart';
 import 'package:book_store/features/book/presentation/providers/handleSubmit.dart';
-import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
 import 'package:book_store/features/book/presentation/widgets/change_pass_bottom_sheet.dart';
 import 'package:book_store/features/book/presentation/widgets/custom_button.dart';
@@ -13,7 +12,6 @@ import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

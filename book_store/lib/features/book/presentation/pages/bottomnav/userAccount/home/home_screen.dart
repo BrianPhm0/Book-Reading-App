@@ -195,188 +195,200 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: BlocConsumer<HomeBloc, HomeState>(
-        listener: (context, state) {
-          if (state is HomeFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.toString())),
-            );
-          }
-        },
-        builder: (context, state) {
-          if (state is HomeLoading) {
-            return const Center(child: Loader(size: 50.0, color: Colors.black));
-          } else if (state is HomeSuccess) {
-            return SafeArea(
-              child: SingleChildScrollView(
-                child: Column(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Tiêu đề và nút tài khoản
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Tiêu đề và nút tài khoản
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const TextCustom(
-                              text: 'Happy Reading!',
-                              fontSize: 35,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black),
-                          IconButton(
-                              onPressed: () {
-                                context.read<AuthBloc>().add(AuthGetUser());
-                                context.pushNamed(AppRoute.account.name);
-                              },
-                              icon: const Icon(
-                                Icons.account_circle,
-                                color: Colors.black,
-                                size: 45,
-                              )),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    // Phần tiêu đề "Best Deals"
-                    Container(
-                      margin: const EdgeInsets.only(left: 20),
-                      alignment: Alignment.topLeft,
-                      child: const TextCustom(
-                          text: 'Best Deals',
-                          fontSize: 30,
-                          color: Colors.black),
-                    ),
-                    // Danh sách ngang "Best Deals"
-                    SizedBox(
-                      height: 180,
-                      child: PageView.builder(
-                          onPageChanged: (index) {
-                            pageNo = index;
-                            setState(() {});
-                          },
-                          itemCount: state.bestDeal.length,
-                          controller: pageController,
-                          itemBuilder: (_, index) {
-                            return GestureDetector(
-                              onTap: () {
-                                // print("heheh");
-                                // print(getToken().toString());
-                                context.pushNamed(
-                                  AppRoute.detailBook.name,
-                                  extra: UserBookArgs(
-                                    book: state.bestDeal[index],
-                                  ),
-                                );
-                              },
-                              onPanDown: (_) {
-                                carouselTimer?.cancel();
-                                carouselTimer = null;
-                              },
-                              onPanCancel: () {
-                                carouselTimer = getTimer();
-                              },
-                              child: buildItem(
-                                context,
-                                index,
-                                state.bestDeal[index],
-                              ),
-                            );
-                          }),
-                    ),
-                    // Chấm đánh dấu trang hiện tại
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        state.bestDeal.length,
-                        (index) => Container(
-                          margin: const EdgeInsets.all(2.0),
-                          child: Icon(
-                            Icons.circle,
-                            size: 12.0,
-                            color: pageNo == index ? Colors.black : Colors.grey,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    // Phần tiêu đề "Top Books"
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      alignment: Alignment.topLeft,
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextCustom(
-                              text: 'Top Books',
-                              fontSize: 30,
-                              color: Colors.black),
-                        ],
-                      ),
-                    ),
-                    // Danh sách ngang "Top Books"
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      height: 300,
-                      child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            return buildTopBookItem(
-                                context, index, state.latestBooks[index],
-                                onTap: () {
-                              context.pushNamed(
-                                AppRoute.detailBook.name,
-                                extra: UserBookArgs(
-                                  book: state.latestBooks[index],
-                                ),
-                              );
-                            });
-                          },
-                          separatorBuilder: (context, index) => const Divider(),
-                          itemCount: state.latestBooks.length),
-                    ),
-                    // Phần tiêu đề "Latest Books"
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      alignment: Alignment.topLeft,
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          TextCustom(
-                              text: 'Latest Books',
-                              fontSize: 30,
-                              color: Colors.black),
-                        ],
-                      ),
-                    ),
-                    // Danh sách ngang "Latest Books"
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      height: 300,
-                      child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: state.latestBooks.length,
-                          itemBuilder: (context, index) {
-                            final book = state.topBooks[index];
-                            return buildTopBookItem(context, index, book,
-                                onTap: () {
-                              context.pushNamed(
-                                AppRoute.detailBook.name,
-                                extra: UserBookArgs(
-                                  book: book,
-                                ),
-                              );
-                            });
-                          }),
-                    ),
+                    const TextCustom(
+                        text: 'Happy Reading!',
+                        fontSize: 35,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black),
+                    IconButton(
+                        onPressed: () {
+                          context.read<AuthBloc>().add(AuthGetUser());
+                          context.pushNamed(AppRoute.account.name);
+                        },
+                        icon: const Icon(
+                          Icons.account_circle,
+                          color: Colors.black,
+                          size: 45,
+                        )),
                   ],
                 ),
               ),
-            );
-          } else {
-            return const Center(
-              child: Text("Error fetching data"),
-            );
-          }
-        },
+              const SizedBox(height: 20),
+              // Phần tiêu đề "Best Deals"
+              BlocBuilder<HomeBloc, HomeState>(
+                builder: (context, state) {
+                  if (state is HomeLoading) {
+                    return const Center(
+                        child: Loader(size: 50.0, color: Colors.black));
+                  } else if (state is HomeSuccess) {
+                    return Column(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(left: 20),
+                          alignment: Alignment.topLeft,
+                          child: const TextCustom(
+                              text: 'Best Deals',
+                              fontSize: 30,
+                              color: Colors.black),
+                        ),
+                        SizedBox(
+                          height: 180,
+                          child: PageView.builder(
+                              onPageChanged: (index) {
+                                pageNo = index;
+                                setState(() {});
+                              },
+                              itemCount: state.bestDeal.length,
+                              controller: pageController,
+                              itemBuilder: (_, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    // print("heheh");
+                                    // print(getToken().toString());
+                                    context.pushNamed(
+                                      AppRoute.detailBook.name,
+                                      extra: UserBookArgs(
+                                        book: state.bestDeal[index],
+                                      ),
+                                    );
+                                  },
+                                  onPanDown: (_) {
+                                    carouselTimer?.cancel();
+                                    carouselTimer = null;
+                                  },
+                                  onPanCancel: () {
+                                    carouselTimer = getTimer();
+                                  },
+                                  child: buildItem(
+                                    context,
+                                    index,
+                                    state.bestDeal[index],
+                                  ),
+                                );
+                              }),
+                        ),
+                        // Chấm đánh dấu trang hiện tại
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                            state.bestDeal.length,
+                            (index) => Container(
+                              margin: const EdgeInsets.all(2.0),
+                              child: Icon(
+                                Icons.circle,
+                                size: 12.0,
+                                color: pageNo == index
+                                    ? Colors.black
+                                    : Colors.grey,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        // Phần tiêu đề "Top Books"
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          alignment: Alignment.topLeft,
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextCustom(
+                                  text: 'Top Books',
+                                  fontSize: 30,
+                                  color: Colors.black),
+                            ],
+                          ),
+                        ),
+                        // Danh sách ngang "Top Books"
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          height: 300,
+                          child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                return buildTopBookItem(
+                                    context, index, state.latestBooks[index],
+                                    onTap: () {
+                                  context.pushNamed(
+                                    AppRoute.detailBook.name,
+                                    extra: UserBookArgs(
+                                      book: state.latestBooks[index],
+                                    ),
+                                  );
+                                });
+                              },
+                              separatorBuilder: (context, index) =>
+                                  const Divider(),
+                              itemCount: state.latestBooks.length),
+                        ),
+                        // Phần tiêu đề "Latest Books"
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 20),
+                          alignment: Alignment.topLeft,
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextCustom(
+                                  text: 'Latest Books',
+                                  fontSize: 30,
+                                  color: Colors.black),
+                            ],
+                          ),
+                        ),
+                        // Danh sách ngang "Latest Books"
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          height: 300,
+                          child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: state.latestBooks.length,
+                              itemBuilder: (context, index) {
+                                final book = state.topBooks[index];
+                                return buildTopBookItem(context, index, book,
+                                    onTap: () {
+                                  context.pushNamed(
+                                    AppRoute.detailBook.name,
+                                    extra: UserBookArgs(
+                                      book: book,
+                                    ),
+                                  );
+                                });
+                              }),
+                        ),
+                      ],
+                    );
+                  }
+                  return Align(
+                    alignment: Alignment.topCenter,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Container(
+                        padding: const EdgeInsets.only(top: 50),
+                        child: const TextCustom(
+                          text:
+                              "No content available at the moment. Please check back later!",
+                          fontSize: 25,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              // Danh sách ngang "Best Deals"
+            ],
+          ),
+        ),
       ),
     );
   }

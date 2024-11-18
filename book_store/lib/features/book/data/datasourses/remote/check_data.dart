@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:book_store/api_config.dart';
 import 'package:book_store/core/error/exceptions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -20,8 +21,7 @@ class CheckDataImpl implements CheckData {
   @override
   Future<void> payCash(
       String name, String phone, String address, String? voucher) async {
-    final url = Uri.parse(
-        'http://localhost:7274/api/Orders/checkout'); // URL for the API endpoint
+    final url = Uri.parse(ApiConfig.payCash); // URL for the API endpoint
     final token =
         await getToken(); // Assuming getToken() returns the authentication token
 

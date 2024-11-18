@@ -62,6 +62,7 @@ class _DetailBookState extends State<DetailBook> {
           }
         },
         builder: (context, state) {
+          // print(state);
           if (state is DetailLoading) {
             return const Center(child: Loader(size: 50.0, color: Colors.black));
           } else if (state is DetailSuccess) {

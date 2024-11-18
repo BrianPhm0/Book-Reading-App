@@ -37,4 +37,10 @@ final class AuthPasswordResetSuccess extends AuthState {}
 final class AuthSignOutSuccess extends AuthState {}
 
 final class UpdateUserSuccess extends AuthState {}
+
+final class VerifyCodeSuccess extends AuthState {
+  final String? verifyCode;
+
+  const VerifyCodeSuccess(this.verifyCode);
+}
 // final class AuthCurrUser extends AuthState {}

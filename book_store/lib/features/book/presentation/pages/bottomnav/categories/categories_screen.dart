@@ -75,10 +75,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       body: BlocConsumer<BookBloc, BookState>(
         listener: (context, state) {
           if (state is BookFailure) {
-            // Hiển thị thông báo lỗi nếu có
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.toString())),
-            );
+            // // Hiển thị thông báo lỗi nếu có
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(content: Text(state.toString())),
+            // );
           }
         },
         builder: (context, state) {
@@ -116,9 +116,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     fontSize: 20,
                     color: Colors.black));
           }
-          return Center(
-            child: Text('Unknown state: ${state.toString()}'),
-          );
+          return const Center(child: Loader(size: 50.0, color: Colors.black));
         },
       ),
     );

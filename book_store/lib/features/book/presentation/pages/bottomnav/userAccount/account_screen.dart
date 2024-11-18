@@ -45,12 +45,17 @@ class _AccountScreenState extends State<AccountScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: BlocBuilder<AuthBloc, AuthState>(
+          child: BlocConsumer<AuthBloc, AuthState>(
+            listener: (context, userState) {
+              if (userState is AuthFailure) {
+                Navigator.of(context).pop();
+                context.pushNamed(AppRoute.login.name);
+              }
+            },
             builder: (context, userState) {
               if (userState is AuthSuccess) {
                 final user = userState.user;
                 // print(user);
-
                 return _buildAccountContent(context, user);
               } else if (userState is AuthLoading) {
                 return const Center(

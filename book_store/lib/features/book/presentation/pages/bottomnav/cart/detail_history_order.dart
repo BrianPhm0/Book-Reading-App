@@ -21,7 +21,7 @@ class DetailHistoryOrder extends StatefulWidget {
 }
 
 class _DetailHistoryOrderState extends State<DetailHistoryOrder> {
-  bool _hasReviewed = false;
+  final bool _hasReviewed = false;
 
   @override
   void initState() {

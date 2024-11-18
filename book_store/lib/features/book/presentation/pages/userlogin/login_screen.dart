@@ -171,6 +171,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ],
                         ),
+                        // CustomTextButton(
+                        //   fontSize: 2,
+                        //   name: 'Use as a Guest?',
+                        //   onPressed: () {
+                        //     // Handle the Register button press
+                        //     context.pushNamed(AppRoute.bottomnav.name);
+                        //   },
+                        //   underlineCheck: true,
+                        // ),
                       ],
                     ),
                   ),

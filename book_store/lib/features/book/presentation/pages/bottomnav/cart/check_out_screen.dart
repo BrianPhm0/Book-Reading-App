@@ -48,6 +48,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
       body: BlocConsumer<CheckBloc, CheckState>(
         listener: (context, state) {
           if (state is CheckSuccess) {
+            print(state);
             context.read<CheckBloc>().add(ResetCheckEvent());
             context.goNamed(AppRoute.paymentSuccess.name);
           }
@@ -228,6 +229,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
                         name: "Pay",
                         onPressed: () {
                           if (addressDefault?.name != null) {
+                            // print('haha');
                             context.read<CheckBloc>().add(PayCashEvent(
                                 addressDefault!.name,
                                 addressDefault!.phone,

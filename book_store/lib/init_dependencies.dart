@@ -39,6 +39,7 @@ import 'package:book_store/features/book/business/usecases/user/user_login_jwt.d
 import 'package:book_store/features/book/business/usecases/user/user_sign_out.dart';
 import 'package:book_store/features/book/business/usecases/user/user_sign_up.dart';
 import 'package:book_store/features/book/business/usecases/user/user_token_current.dart';
+import 'package:book_store/features/book/business/usecases/user/verify.dart';
 import 'package:book_store/features/book/business/usecases/voucher/add_voucher.dart';
 import 'package:book_store/features/book/business/usecases/voucher/get_public_voucher.dart';
 import 'package:book_store/features/book/business/usecases/voucher/get_voucher.dart';
@@ -105,7 +106,8 @@ void _initAuth() {
   // Register the AuthRemoteDataSource
   serviceLocator
     ..registerFactory<AuthRemoteDataSource>(
-        () => AuthRemoteDataSourceImple(serviceLocator()))
+        () => AuthRemoteDataSourceImple(serviceLocator(), serviceLocator()))
+    ..registerFactory<LocalData>(() => LocalDataImpl())
 
     // Register the AuthRepository
     ..registerFactory<AuthRepository>(
@@ -124,6 +126,7 @@ void _initAuth() {
     ..registerFactory<UpdateUser>(() => UpdateUser(serviceLocator()))
     ..registerFactory<UserTokenCurrent>(
         () => UserTokenCurrent(serviceLocator()))
+    ..registerFactory<VerifyCode>(() => VerifyCode(serviceLocator()))
 
     // Finally, register AuthBloc
 
@@ -140,7 +143,8 @@ void _initAuth() {
         userLoginJwt: serviceLocator(),
         tokenCurrent: serviceLocator(),
         getUser: serviceLocator(),
-        updateUser: serviceLocator()));
+        updateUser: serviceLocator(),
+        verifyCode: serviceLocator()));
 }
 
 void _initBook() {
@@ -198,7 +202,6 @@ void _initCart() {
 
 void _initAddress() {
   serviceLocator
-    ..registerFactory<LocalData>(() => LocalDataImpl())
     ..registerFactory<AddressRepository>(
         () => AddressRepositoryImpl(localData: serviceLocator()))
     ..registerFactory<SaveAddress>(() => SaveAddress(serviceLocator()))
