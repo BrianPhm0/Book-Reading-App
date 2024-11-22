@@ -53,6 +53,7 @@ abstract class AuthRemoteDataSource {
 class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
   final firebase_auth.FirebaseAuth firebaseAuth;
 
+  @override
   final LocalData localData;
 
   AuthRemoteDataSourceImple(this.firebaseAuth, this.localData);
