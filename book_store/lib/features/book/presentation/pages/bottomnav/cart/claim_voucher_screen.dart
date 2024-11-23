@@ -15,7 +15,6 @@ class ClaimVoucherScreen extends StatefulWidget {
 }
 
 class _ClaimVoucherScreenState extends State<ClaimVoucherScreen> {
-  int? selected;
   final TextEditingController text = TextEditingController();
 
   @override
@@ -107,7 +106,6 @@ class _ClaimVoucherScreenState extends State<ClaimVoucherScreen> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          selected = index;
           showSnackBar(context, 'Voucher has been added');
           context.read<VoucherBloc>().add(AddVoucherEvent(voucher.voucherCode));
         });
@@ -119,7 +117,7 @@ class _ClaimVoucherScreenState extends State<ClaimVoucherScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: selected == index ? Colors.black : Colors.grey,
+            color: Colors.grey,
             width: 3,
           ),
         ),
@@ -157,11 +155,11 @@ class _ClaimVoucherScreenState extends State<ClaimVoucherScreen> {
                   ],
                 ),
               ),
-              Expanded(
+              const Expanded(
                 flex: 1,
                 child: Icon(
                   Icons.check_circle,
-                  color: selected == index ? Colors.black : Colors.white,
+                  color: Colors.white,
                   size: 30,
                 ),
               ),

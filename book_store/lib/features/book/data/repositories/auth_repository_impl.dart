@@ -137,11 +137,11 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateUser(String id, String email,
+  Future<Either<Failure, void>> updateUser(String id, String name, String email,
       String phone, String fullName, String address) async {
     try {
       final user = await remoteDataSource.updateUser(
-          id, email, phone, fullName, address);
+          id, name, email, phone, fullName, address);
       return right(user);
     } on ServerException catch (e) {
       return left(Failure(e.message));
@@ -152,6 +152,18 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, String?>> verifyCode({required String email}) async {
     try {
       final code = await remoteDataSource.verifyCode(email);
+      return right(code);
+    } on ServerException catch (e) {
+      return left(Failure(e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> changePassword(
+      String oldPass, String newPass) async {
+    try {
+      final code = await remoteDataSource.changePassword(
+          oldpass: oldPass, newpass: newPass);
       return right(code);
     } on ServerException catch (e) {
       return left(Failure(e.message));

@@ -1,9 +1,9 @@
 // ignore: depend_on_referenced_packages
-import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:book_store/core/common/cubits/cubit/user_cubit.dart';
 import 'package:book_store/features/book/business/entities/user/user.dart';
+import 'package:book_store/features/book/business/usecases/user/change_password.dart';
 import 'package:book_store/features/book/business/usecases/user/update_user.dart';
 import 'package:book_store/features/book/business/usecases/user/user_current.dart';
 import 'package:book_store/features/book/business/usecases/user/user_forget_pass.dart';
@@ -31,6 +31,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final GetUser _getUser;
   final VerifyCode _verifyCode;
   final UpdateUser _updateUser;
+  final ChangePassword _changePassword;
   //handle the use case
   AuthBloc(
       {required UserSignUp userSignUp,
@@ -43,6 +44,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       required GetUser getUser,
       required UpdateUser updateUser,
       required VerifyCode verifyCode,
+      required ChangePassword changePassword,
       required UserLoginJwt userLoginJwt})
       : _userSignUp = userSignUp,
         _userLogin = userLogin,
@@ -53,6 +55,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _userLoginJwt = userLoginJwt,
         _tokenCurrent = tokenCurrent,
         _verifyCode = verifyCode,
+        _changePassword = changePassword,
         _updateUser = updateUser,
         _getUser = getUser,
         super(AuthInitial()) {
@@ -67,6 +70,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthGetUser>(_onAuthGetUser);
     on<UpdateUserEvent>(_onUpdateUser);
     on<VerifyCodeEvent>(_onVerifyCode);
+    on<ChangePassEvent>(_onChangePassword);
   }
 
   void _onAuthSignUp(AuthSignUp event, Emitter<AuthState> emit) async {
@@ -147,8 +151,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onUpdateUser(UpdateUserEvent event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
-    final res = await _updateUser(UpdateUserParams(
-        event.id, event.email, event.phone, event.fullName, event.address));
+    final res = await _updateUser(UpdateUserParams(event.id, event.name,
+        event.email, event.phone, event.fullName, event.address));
     res.fold((failure) => emit(AuthFailure(failure.message)),
         (r) => emit(UpdateUserSuccess()));
   }
@@ -158,5 +162,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final res = await _verifyCode(VerifyParams(email: event.code));
     res.fold((failure) => emit(AuthFailure(failure.message)),
         (r) => emit(VerifyCodeSuccess(r)));
+  }
+
+  void _onChangePassword(ChangePassEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    final res = await _changePassword(
+        ChangePasswordParams(event.oldPass, event.newPass));
+    res.fold((l) => emit(AuthPassFail(l.message)), (r) {
+      emit(ChangePassSuccess());
+    });
   }
 }

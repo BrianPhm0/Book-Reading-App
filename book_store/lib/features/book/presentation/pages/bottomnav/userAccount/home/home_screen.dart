@@ -49,12 +49,13 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     // getToken();
     // print(getToken());
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final state = context.read<HomeBloc>().state;
-      if (state is! HomeSuccess) {
-        context.read<HomeBloc>().add(GetHomeBookEvent());
-      }
-    });
+    context.read<HomeBloc>().add(GetHomeBookEvent());
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   final state = context.read<HomeBloc>().state;
+    //   if (state is! HomeSuccess) {
+    //     context.read<HomeBloc>().add(GetHomeBookEvent());
+    //   }
+    // });
 
     // Khởi tạo PageController và Timer
     pageController = PageController(initialPage: 0, viewportFraction: 0.85);
@@ -228,8 +229,11 @@ class _HomeScreenState extends State<HomeScreen> {
               BlocBuilder<HomeBloc, HomeState>(
                 builder: (context, state) {
                   if (state is HomeLoading) {
-                    return const Center(
-                        child: Loader(size: 50.0, color: Colors.black));
+                    return Container(
+                      margin: const EdgeInsets.only(top: 200),
+                      child: const Center(
+                          child: Loader(size: 50.0, color: Colors.black)),
+                    );
                   } else if (state is HomeSuccess) {
                     return Column(
                       children: [
@@ -309,7 +313,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                         ),
-                        // Danh sách ngang "Top Books"
+                        // Danh sách ngang "Top book"
                         Container(
                           padding: const EdgeInsets.all(8),
                           height: 300,
@@ -317,19 +321,19 @@ class _HomeScreenState extends State<HomeScreen> {
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (context, index) {
                                 return buildTopBookItem(
-                                    context, index, state.latestBooks[index],
+                                    context, index, state.topBooks[index],
                                     onTap: () {
                                   context.pushNamed(
                                     AppRoute.detailBook.name,
                                     extra: UserBookArgs(
-                                      book: state.latestBooks[index],
+                                      book: state.topBooks[index],
                                     ),
                                   );
                                 });
                               },
                               separatorBuilder: (context, index) =>
                                   const Divider(),
-                              itemCount: state.latestBooks.length),
+                              itemCount: state.topBooks.length),
                         ),
                         // Phần tiêu đề "Latest Books"
                         Container(
@@ -353,7 +357,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               scrollDirection: Axis.horizontal,
                               itemCount: state.latestBooks.length,
                               itemBuilder: (context, index) {
-                                final book = state.topBooks[index];
+                                final book = state.latestBooks[index];
                                 return buildTopBookItem(context, index, book,
                                     onTap: () {
                                   context.pushNamed(

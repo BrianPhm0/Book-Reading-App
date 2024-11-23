@@ -219,7 +219,7 @@ class _RatingState extends State<Rating> {
             TextButton(
                 onPressed: () {
                   Navigator.of(context).pop(); // Close the dialog
-                },
+                },a
                 child: const TextCustom(
                     text: "Cancel", fontSize: 20, color: Colors.red)),
             const Spacer(),

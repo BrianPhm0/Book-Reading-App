@@ -48,17 +48,25 @@ final class AuthUserSignOut extends AuthEvent {}
 
 final class UpdateUserEvent extends AuthEvent {
   final String id;
+  final String name;
   final String email;
   final String phone;
   final String fullName;
   final String address;
 
   const UpdateUserEvent(
-      this.id, this.email, this.phone, this.fullName, this.address);
+      this.id, this.name, this.email, this.phone, this.fullName, this.address);
 }
 
 final class VerifyCodeEvent extends AuthEvent {
   final String code;
 
   const VerifyCodeEvent(this.code);
+}
+
+final class ChangePassEvent extends AuthEvent {
+  final String oldPass;
+  final String newPass;
+
+  const ChangePassEvent(this.oldPass, this.newPass);
 }

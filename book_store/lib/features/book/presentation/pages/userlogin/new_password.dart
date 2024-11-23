@@ -1,14 +1,13 @@
 import 'package:book_store/core/common/widgets/loader.dart';
+import 'package:book_store/core/utils/show_snackbar.dart';
 import 'package:book_store/features/book/presentation/bloc/auth/auth_bloc.dart';
 
 import 'package:book_store/features/book/presentation/providers/handleSubmit.dart';
-import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
 import 'package:book_store/features/book/presentation/widgets/custom_button.dart';
 import 'package:book_store/features/book/presentation/widgets/custome_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 class ForgotPass extends StatefulWidget {
   const ForgotPass({super.key});
@@ -51,7 +50,7 @@ class _ForgotPassState extends State<ForgotPass> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: const CustomAppBar(
-          title: 'Forget Password',
+          title: 'New Password',
         ),
         body: SizedBox.expand(
           child: Stack(
@@ -59,41 +58,41 @@ class _ForgotPassState extends State<ForgotPass> {
               SafeArea(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
-                  child:
-
-                      // showDialogAuth(
-                      //     context,
-                      //     AppRoute.login.name,
-                      //     'Verification Code Sent',
-                      //     'A code has been sent to your email. Check your inbox (or spam folder) and enter the code below to continue.\nDidn’t get it? Wait a moment, then tap "Resend Code."');
-
-                      Form(
-                    key: formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        CustomeTextfield(
-                          name: 'Email',
-                          inputType: TextInputType.emailAddress,
-                          controller: emailController,
-                          obscureText: false,
-                          validator: _formHandler.validators[0],
+                  child: BlocConsumer<AuthBloc, AuthState>(
+                    listener: (context, state) {
+                      if (state is AuthFailure) {
+                        showSnackBar(context, state.message);
+                      } else if (state is AuthPasswordResetSuccess) {}
+                    },
+                    builder: (context, state) {
+                      return Form(
+                        key: formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            CustomeTextfield(
+                              name: 'Email',
+                              inputType: TextInputType.emailAddress,
+                              controller: emailController,
+                              obscureText: false,
+                            ),
+                            const SizedBox(height: 20),
+                            SizedBox(
+                              height: 50,
+                              child: CustomButton(
+                                name: 'Submit',
+                                onPressed: () {
+                                  _formHandler.submit(() {
+                                    context.read<AuthBloc>().add(AuthResetPass(
+                                        email: emailController.text.trim()));
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 20),
-                        SizedBox(
-                          height: 50,
-                          child: CustomButton(
-                            name: 'Submit',
-                            onPressed: () {
-                              _formHandler.submit(() {
-                                context.pushNamed(AppRoute.verifyPass.name,
-                                    extra: emailController.text.trim());
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
               ),

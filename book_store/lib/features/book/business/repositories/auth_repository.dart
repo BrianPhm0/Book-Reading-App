@@ -37,9 +37,15 @@ abstract interface class AuthRepository {
 
   Future<Either<Failure, void>> updateUser(
     String id,
+    String name,
     String email,
     String phone,
     String fullName,
     String address,
+  );
+
+  Future<Either<Failure, void>> changePassword(
+    String oldPass,
+    String newPass,
   );
 }

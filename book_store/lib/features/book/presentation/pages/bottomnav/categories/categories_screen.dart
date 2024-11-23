@@ -18,13 +18,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   void initState() {
     super.initState();
-    // Chỉ gọi sự kiện để lấy loại sách khi cây widget đã được xây dựng
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final state = context.read<BookBloc>().state;
-      if (state is! BookTypeSuccess) {
-        context.read<BookBloc>().add(GetAllBookType());
-      }
-    });
+    context.read<BookBloc>().add(GetAllBookType());
   }
 
   Widget buildItem(BuildContext context, int index, String bookType,
@@ -73,15 +67,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         title: 'Categories',
       ),
       body: BlocConsumer<BookBloc, BookState>(
-        listener: (context, state) {
-          if (state is BookFailure) {
-            // // Hiển thị thông báo lỗi nếu có
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   SnackBar(content: Text(state.toString())),
-            // );
-          }
-        },
+        listener: (context, state) {},
         builder: (context, state) {
+          // print(state);
           if (state is BookLoading) {
             return const Center(child: Loader(size: 50.0, color: Colors.black));
           } else if (state is BookTypeSuccess) {
@@ -99,9 +87,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   index,
                   state.bookType[index].bookTypeName,
                   onTap: () {
-                    context
-                        .read<BookBloc>()
-                        .add(GetBooksByType(state.bookType[index].bookTypeId));
+                    // context
+                    //     .read<BookBloc>()
+                    //     .add(GetBooksByType(state.bookType[index].bookTypeId));
                     context.pushNamed(AppRoute.categoriyBooks.name,
                         extra: state.bookType[index]);
                   },
@@ -116,7 +104,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     fontSize: 20,
                     color: Colors.black));
           }
-          return const Center(child: Loader(size: 50.0, color: Colors.black));
+          if (state is BookItemSuccess) {
+            // // Hiển thị thông báo lỗi nếu có
+            // context.read<BookBloc>().add(GetAllBookType());
+          }
+          return Center(child: Text("unknow state :$state"));
+          // return const Center(child: Loader(size: 50.0, color: Colors.black));
         },
       ),
     );

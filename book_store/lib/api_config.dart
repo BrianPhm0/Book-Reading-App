@@ -1,6 +1,6 @@
 class ApiConfig {
-  // static const String baseUrl = 'http://10.0.2.2:7274/api';
-  static const String baseUrl = 'http://localhost:7274/api';
+  static const String baseUrl = 'http://10.0.2.2:7274/api';
+  // static const String baseUrl = 'http://localhost:7274/api';
 
   //register
   static const String registerEndpoint = '$baseUrl/Auth/register';
@@ -79,8 +79,11 @@ class ApiConfig {
   static const String searchBook = '$baseUrl/Book/search?';
 
   //update user
-  static const String updateUser = '$baseUrl/User?id=';
+  static const String updateUser = '$baseUrl/User/update-user';
 
   //verify code
   static const String verifyCode = '$baseUrl/Auth/check-mail?email=';
+
+  //change pass
+  static const String changePass = '$baseUrl/User/change-password';
 }

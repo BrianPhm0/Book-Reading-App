@@ -29,6 +29,7 @@ import 'package:book_store/features/book/business/usecases/order/cancel_order.da
 import 'package:book_store/features/book/business/usecases/order/get_order.dart';
 import 'package:book_store/features/book/business/usecases/order/get_order_by_id.dart';
 import 'package:book_store/features/book/business/usecases/detail/post_review.dart';
+import 'package:book_store/features/book/business/usecases/user/change_password.dart';
 import 'package:book_store/features/book/business/usecases/user/update_user.dart';
 import 'package:book_store/features/book/business/usecases/user/user_current.dart';
 import 'package:book_store/features/book/business/usecases/user/user_forget_pass.dart';
@@ -133,6 +134,7 @@ void _initAuth() {
     //User Save Token
     // ..registerFactory<UserSaveToken>(() => UserSaveToken(serviceLocator()))
     ..registerFactory<CurrentUser>(() => CurrentUser(serviceLocator()))
+    ..registerFactory<ChangePassword>(() => ChangePassword(serviceLocator()))
     ..registerLazySingleton<AuthBloc>(() => AuthBloc(
         userSignUp: serviceLocator(),
         userLogin: serviceLocator(),
@@ -144,7 +146,8 @@ void _initAuth() {
         tokenCurrent: serviceLocator(),
         getUser: serviceLocator(),
         updateUser: serviceLocator(),
-        verifyCode: serviceLocator()));
+        verifyCode: serviceLocator(),
+        changePassword: serviceLocator()));
 }
 
 void _initBook() {

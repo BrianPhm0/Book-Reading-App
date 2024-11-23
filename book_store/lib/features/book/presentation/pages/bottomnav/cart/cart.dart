@@ -1,11 +1,11 @@
 import 'package:book_store/core/common/widgets/loader.dart';
-import 'package:book_store/core/utils/show_snackbar.dart';
 import 'package:book_store/features/book/business/entities/cart/cart.dart';
 import 'package:book_store/features/book/business/entities/voucher/voucher.dart';
+import 'package:book_store/features/book/presentation/bloc/auth/auth_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/cart/bloc/cart_bloc.dart';
-import 'package:book_store/features/book/presentation/pages/bottomnav/cart/voucher_args.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/features/book/presentation/widgets/app_bar.dart';
+import 'package:book_store/features/book/presentation/widgets/custom_text_button.dart';
 import 'package:book_store/features/book/presentation/widgets/text_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,14 +37,52 @@ class _CartState extends State<Cart> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<CartBloc, CartState>(
-      listener: (context, state) {
-        if (state is CartFailure) {}
-      },
+    return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
-        if (state is CartLoading) {
-          return const Center(child: Loader(size: 50.0, color: Colors.black));
-        } else if (state is GetCartSuccess) {
+        if (state is AuthFailure) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: const CustomAppBar(
+              title: "Cart",
+            ),
+            body: Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Container(
+                  padding: const EdgeInsets.only(top: 50),
+                  child: Wrap(
+                    alignment: WrapAlignment
+                        .center, // Căn giữa các phần tử theo chiều ngang
+                    spacing:
+                        10.0, // Khoảng cách giữa các phần tử theo chiều ngang
+                    runSpacing: 10.0, // Khoảng cách giữa các dòng
+                    children: [
+                      const TextCustom(
+                        textAlign: TextAlign.center,
+                        text: "You need to log in to access cart!",
+                        fontSize: 22,
+                        color: Colors.black,
+                      ),
+                      CustomTextButton(
+                        fontSize: 22,
+                        name: 'Login',
+                        onPressed: () {
+                          // Điều hướng đến màn hình đăng nhập
+                          context.pushNamed(AppRoute.login.name);
+                        },
+                        underlineCheck: true,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        } else if (state is AuthTokenSuccess) {
+          context.read<AuthBloc>().add(AuthGetUser());
+        } else if (state is AuthSuccess) {
+          context.read<CartBloc>().add(GetCartEvent());
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: CustomAppBar(
@@ -71,14 +109,14 @@ class _CartState extends State<Cart> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          ListView.builder(
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return buildItem(
-                                  context, index, state.cart[index]);
-                            },
-                            itemCount: state.cart.length,
-                          ),
+                          // ListView.builder(
+                          //   shrinkWrap: true,
+                          //   itemBuilder: (context, index) {
+                          //     return buildItem(
+                          //         context, index, state.cart[index]);
+                          //   },
+                          //   itemCount: state.cart.length,
+                          // ),
                           const SizedBox(height: 15),
                           const TextCustom(
                             text: "Order Summary",
@@ -86,181 +124,180 @@ class _CartState extends State<Cart> {
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
                           ),
-                          const SizedBox(height: 10),
-                          _buildSummaryRow(
-                              "Subtotal", '${getTotal(state.cart)} VND'),
-                          const SizedBox(height: 10),
-                          _buildSummaryRow("Shipping", "0 VND"),
+                          // const SizedBox(height: 10),
+                          // _buildSummaryRow(
+                          //     "Subtotal", '${getTotal(state.cart)} VND'),
+                          // const SizedBox(height: 10),
+                          // _buildSummaryRow("Shipping", "0 VND"),
                           const SizedBox(height: 10),
                           Container(
                             height: 1,
                             color: Colors.black,
                           ),
                           const SizedBox(height: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              // Original price with strikethrough, shown only if there's a discount
-                              if (_selectedVoucher != null &&
-                                  _selectedVoucher!.discount > 0)
-                                Text(
-                                  "${getTotal(state.cart).toStringAsFixed(2)} VND",
-                                  style: const TextStyle(
-                                    fontFamily: 'Schyler',
-                                    fontSize: 23,
-                                    color: Colors.grey,
-                                    decoration: TextDecoration
-                                        .lineThrough, // Strikethrough
-                                  ),
-                                ),
+                          // Column(
+                          //   crossAxisAlignment: CrossAxisAlignment.end,
+                          //   children: [
+                          //     // Original price with strikethrough, shown only if there's a discount
+                          //     if (_selectedVoucher != null &&
+                          //         _selectedVoucher!.discount > 0)
+                          //       Text(
+                          //         "${getTotal(state.cart).toStringAsFixed(2)} VND",
+                          //         style: const TextStyle(
+                          //           fontFamily: 'Schyler',
+                          //           fontSize: 23,
+                          //           color: Colors.grey,
+                          //           decoration: TextDecoration
+                          //               .lineThrough, // Strikethrough
+                          //         ),
+                          //       ),
 
-                              // Discounted total
-                              _buildSummaryRow(
-                                "Total",
-                                "${double.parse((getTotal(state.cart) * (1 - (_selectedVoucher?.discount ?? 0))).toStringAsFixed(2)).toInt()} VND",
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ],
-                          )
+                          //     // Discounted total
+                          //     _buildSummaryRow(
+                          //       "Total",
+                          //       "${double.parse((getTotal(state.cart) * (1 - (_selectedVoucher?.discount ?? 0))).toStringAsFixed(2)).toInt()} VND",
+                          //       fontSize: 25,
+                          //       fontWeight: FontWeight.bold,
+                          //     ),
+                          //   ],
+                          // )
                         ],
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: double.infinity, // Chiều rộng bằng màn hình
-                    child: Column(children: [
-                      Container(
-                        color: Colors.grey,
-                        height: 1,
-                      ),
-                      InkWell(
-                        onTap: () async {
-                          final result = await context.pushNamed(
-                              AppRoute.voucher.name,
-                              extra: _selectedIndex ?? -1);
+                  // SizedBox(
+                  //   width: double.infinity, // Chiều rộng bằng màn hình
+                  //   child: Column(children: [
+                  //     Container(
+                  //       color: Colors.grey,
+                  //       height: 1,
+                  //     ),
+                  // InkWell(
+                  //   onTap: () async {
+                  //     final result = await context.pushNamed(
+                  //         AppRoute.voucher.name,
+                  //         extra: _selectedIndex ?? -1);
 
-                          if (result != null && result is VoucherArgs) {
-                            setState(() {
-                              _selectedVoucher = result.voucher;
-                              _selectedIndex = result.index;
-                            });
+                  // if (result != null && result is VoucherArgs) {
+                  // setState(() {
+                  //   _selectedVoucher = result.voucher;
+                  //   _selectedIndex = result.index;
+                  // });
 
-                            if (_selectedVoucher != null &&
-                                _selectedVoucher!.minCost >
-                                    getTotal(state.cart)) {
-                              showSnackBar(
-                                  // ignore: use_build_context_synchronously
-                                  context,
-                                  'Does not satisfy the condition');
-                              setState(() {
-                                _selectedVoucher = null;
-                                _selectedIndex = null;
-                              });
-                            }
-                          }
-                        },
-                        child: SizedBox(
-                          height: 50,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 20, right: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Row(
-                                  children: [
-                                    Icon(Icons.local_offer),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    TextCustom(
-                                        text: "Voucher",
-                                        fontSize: 20,
-                                        color: Colors.black),
-                                  ],
-                                ),
-                                _selectedVoucher != null
-                                    ? TextCustom(
-                                        text:
-                                            '-${_selectedVoucher!.discount * 100}%',
-                                        fontSize: 26,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black)
-                                    : const Icon(Icons.arrow_forward)
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        color: Colors.grey,
-                        height: 1,
-                      ),
-                      InkWell(
-                        onTap: () {
-                          context.pushNamed(AppRoute.checkout.name,
-                              extra: _selectedVoucher?.voucherCode ?? '');
-                        },
-                        child: Container(
-                          color: Colors.black,
-                          child: const SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: Center(
-                              // Thêm Center để căn giữa
-                              child: TextCustom(
-                                text: "Check out",
-                                fontSize: 25,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    ]),
-                  ),
+                  //   if (_selectedVoucher != null &&
+                  //       _selectedVoucher!.minCost >
+                  //           getTotal(state.cart)) {
+                  //     showSnackBar(
+                  // ignore: use_build_context_synchronously
+                  //         context,
+                  //         'Does not satisfy the condition');
+                  //     setState(() {
+                  //       _selectedVoucher = null;
+                  //       _selectedIndex = null;
+                  //     });
+                  //   }
+                  // }
+                  // },
+                  //       child: SizedBox(
+                  //         height: 50,
+                  //         child: Padding(
+                  //           padding: const EdgeInsets.only(left: 20, right: 20),
+                  //           child: Row(
+                  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //             crossAxisAlignment: CrossAxisAlignment.center,
+                  //             children: [
+                  //               const Row(
+                  //                 children: [
+                  //                   Icon(Icons.local_offer),
+                  //                   SizedBox(
+                  //                     width: 10,
+                  //                   ),
+                  //                   TextCustom(
+                  //                       text: "Voucher",
+                  //                       fontSize: 20,
+                  //                       color: Colors.black),
+                  //                 ],
+                  //               ),
+                  //               _selectedVoucher != null
+                  //                   ? TextCustom(
+                  //                       text:
+                  //                           '-${_selectedVoucher!.discount * 100}%',
+                  //                       fontSize: 26,
+                  //                       fontWeight: FontWeight.bold,
+                  //                       color: Colors.black)
+                  //                   : const Icon(Icons.arrow_forward)
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     Container(
+                  //       color: Colors.grey,
+                  //       height: 1,
+                  //     ),
+                  //     InkWell(
+                  //       onTap: () {
+                  //         context.pushNamed(AppRoute.checkout.name,
+                  //             extra: _selectedVoucher?.voucherCode ?? '');
+                  //       },
+                  //       child: Container(
+                  //         color: Colors.black,
+                  //         child: const SizedBox(
+                  //           width: double.infinity,
+                  //           height: 50,
+                  //           child: Center(
+                  //             // Thêm Center để căn giữa
+                  //             child: TextCustom(
+                  //               text: "Check out",
+                  //               fontSize: 25,
+                  //               color: Colors.white,
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     )
+                  //   ]),
+                  // ),
                 ],
               ),
             ),
+
+            //   return Container(
+            //     color: Colors.white,
+            //     child: Center(
+            //       child: Column(
+            //         mainAxisAlignment: MainAxisAlignment.center,
+            //         children: [
+            //           Image.asset(
+            //             "assets/cart/shopping_cart.png",
+            //             width: 150.0, // Set the width
+            //             height: 150.0, // Set the height
+            //           ),
+            //           const SizedBox(
+            //             height: 35,
+            //           ),
+            //           const TextCustom(
+            //             text: "Your Cart is empty",
+            //             fontSize: 35,
+            //             color: Colors.black,
+            //             fontWeight: FontWeight.bold,
+            //           ),
+            //           const SizedBox(
+            //             height: 15,
+            //           ),
+            //           const TextCustom(
+            //             text: "Continue Shopping",
+            //             fontSize: 25,
+            //             color: Colors.black,
+            //           ),
+            //         ],
+            //       ),
+            //     ),
+            //   );
+            // }
           );
-        } else if (state is DeleteCartSuccess) {
-          context.read<CartBloc>().add(GetCartEvent());
-        } else if (state is UpdateCartSuccess) {
-          context.read<CartBloc>().add(GetCartEvent());
-        } else if (state is CartFailure) {}
-        return Container(
-          color: Colors.white,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  "assets/cart/shopping_cart.png",
-                  width: 150.0, // Set the width
-                  height: 150.0, // Set the height
-                ),
-                const SizedBox(
-                  height: 35,
-                ),
-                const TextCustom(
-                  text: "Your Cart is empty",
-                  fontSize: 35,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                const TextCustom(
-                  text: "Continue Shopping",
-                  fontSize: 25,
-                  color: Colors.black,
-                ),
-              ],
-            ),
-          ),
-        );
+        }
+        return const Center(child: Loader(size: 50.0, color: Colors.black));
       },
     );
   }

@@ -1,6 +1,4 @@
-import 'package:book_store/core/common/cubits/cubit/user_cubit.dart';
 import 'package:book_store/core/common/widgets/loader.dart';
-import 'package:book_store/features/book/business/entities/user/user.dart';
 import 'package:book_store/features/book/presentation/bloc/book/bloc/category/book_bloc.dart';
 import 'package:book_store/features/book/presentation/pages/bottomnav/categories/user_book_args.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
@@ -28,11 +26,17 @@ class _CategoriesBooksScreenState extends State<CategoriesBooksScreen> {
   @override
   void initState() {
     super.initState();
-    final state = context.read<BookBloc>().state;
-    if (state is! BooksByTypeSuccess) {
-      context.read<BookBloc>().add(GetBooksByType(widget.bookTypeId));
-    }
+
+    context.read<BookBloc>().add(GetBooksByType(widget.bookTypeId));
+    // context.read<AuthBloc>().add(AuthGetUser());
   }
+
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   // Gọi lại sự kiện để load dữ liệu khi quay lại
+  //   context.read<BookBloc>().add(GetBooksByType(widget.bookTypeId));
+  // }
 
   Widget buildItem(BuildContext context, int index, String title, String image,
       {required VoidCallback onTap}) {
@@ -84,70 +88,52 @@ class _CategoriesBooksScreenState extends State<CategoriesBooksScreen> {
           },
         ),
       ),
-      body: BlocBuilder<UserCubit, UserState>(
-        builder: (context, authState) {
-          User? user;
-          if (authState is UserLoggedIn) {
-            user = authState.user;
-          }
-          return BlocConsumer<BookBloc, BookState>(
-            listener: (context, state) {
-              if (state is BookFailure) {
-                // ScaffoldMessenger.of(context).showSnackBar(
-                //   SnackBar(content: Text(state.toString())),
-                // );
-              }
-            },
-            builder: (context, state) {
-              if (state is BookLoading) {
-                return const Center(
-                    child: Loader(size: 50.0, color: Colors.black));
-              } else if (state is BookItemSuccess) {
-                return LayoutBuilder(
-                  builder: (context, constraints) {
-                    return GridView.builder(
-                      padding: const EdgeInsets.all(12),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, // Number of columns
-                        mainAxisExtent: 280,
-                        crossAxisSpacing: 15, // Horizontal spacing
-                        mainAxisSpacing: 15, // Vertical spacing
-                      ),
-                      itemCount: state.bookItem.length,
-                      itemBuilder: (context, index) {
-                        final book = state.bookItem[index];
-                        return buildItem(
-                          context,
-                          index,
-                          book.title,
-                          book.image,
-                          onTap: () {
-                            context.pushNamed(
-                              AppRoute.detailBook.name,
-                              extra: UserBookArgs(
-                                  book: state.bookItem[index],
-                                  user: user,
-                                  brandName: widget.bookTypeName),
-                            );
-                          },
+      body: BlocConsumer<BookBloc, BookState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          if (state is BookLoading) {
+            return const Center(child: Loader(size: 50.0, color: Colors.black));
+          } else if (state is BookItemSuccess) {
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                return GridView.builder(
+                  padding: const EdgeInsets.all(12),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // Number of columns
+                    mainAxisExtent: 280,
+                    crossAxisSpacing: 15, // Horizontal spacing
+                    mainAxisSpacing: 15, // Vertical spacing
+                  ),
+                  itemCount: state.bookItem.length,
+                  itemBuilder: (context, index) {
+                    final book = state.bookItem[index];
+                    return buildItem(
+                      context,
+                      index,
+                      book.title,
+                      book.image,
+                      onTap: () {
+                        context.pushNamed(
+                          AppRoute.detailBook.name,
+                          extra: UserBookArgs(
+                            book: state.bookItem[index],
+                          ),
                         );
                       },
                     );
                   },
                 );
-              } else if (state is BookItemFail) {
-                return const Center(
-                    child: TextCustom(
-                        textAlign: TextAlign.center,
-                        text: "No books available in this category",
-                        fontSize: 30,
-                        color: Colors.black));
-              }
-              return const Center(
-                  child: Loader(size: 50.0, color: Colors.black));
-            },
-          );
+              },
+            );
+          } else if (state is BookItemFail) {
+            return const Center(
+                child: TextCustom(
+                    textAlign: TextAlign.center,
+                    text: "No books available in this category",
+                    fontSize: 30,
+                    color: Colors.black));
+          }
+          return const Center(child: Loader(size: 50.0, color: Colors.black));
         },
       ),
     );

@@ -100,10 +100,10 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       itemBuilder: (context, index) {
                         return GestureDetector(
                             onTap: () {
+                              
                               context.pushNamed(
                                 AppRoute.readingBook.name,
-                                extra:
-                                    'https://firebasestorage.googleapis.com/v0/b/bookstore-59884.appspot.com/o/images%2F374a111f-3fcb-4e72-b0e7-82e2b5dd2e74.pdf?alt=media&token=6ae0e6df-5c46-4a2f-9aea-5b50ab024c7d&fbclid=IwY2xjawGhXlhleHRuA2FlbQIxMAABHV9GWsFmW-0cQB3ZddW55leO5WxuUyvSosBfu5W8Jbg6NJhA5jDlL4LZzQ_aem_O65eTRDhupzUs14EU89FnQ',
+                                extra: state.purchaseBook[index].linkEbook,
                               );
                             },
                             child: buildItem(
@@ -120,6 +120,10 @@ class _LibraryScreenState extends State<LibraryScreen> {
                         color: Colors.black));
               },
             );
+          }
+          if (state is AuthTokenSuccess) {
+            context.read<AuthBloc>().add(AuthGetUser());
+            context.read<BookBloc>().add(GetPurchaseBookEvent());
           }
           return const Center(child: Loader(size: 50.0, color: Colors.black));
         },

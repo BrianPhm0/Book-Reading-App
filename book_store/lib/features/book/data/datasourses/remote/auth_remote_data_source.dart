@@ -32,13 +32,8 @@ abstract class AuthRemoteDataSource {
     required String password,
   });
 
-  Future<void> updateUser(
-    String id,
-    String email,
-    String phone,
-    String fullName,
-    String address,
-  );
+  Future<void> updateUser(String id, String name, String email, String phone,
+      String fullName, String address);
 
   Future<UserModel?> getCurrentUserData();
 
@@ -48,11 +43,16 @@ abstract class AuthRemoteDataSource {
   Future<void> resetPassword({required String email});
   Future<void> signOut();
   Future<String?> verifyCode(String email);
+  Future<void> changePassword({
+    required String oldpass,
+    required String newpass,
+  });
 }
 
 class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
   final firebase_auth.FirebaseAuth firebaseAuth;
 
+  @override
   final LocalData localData;
 
   AuthRemoteDataSourceImple(this.firebaseAuth, this.localData);
@@ -125,10 +125,11 @@ class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
 
     try {
       final response = await request.send();
-
+      // print(response.statusCode);
       if (response.statusCode == 200) {
         final responseData = await response.stream.bytesToString();
-        // print('Register successfully: $responseData');
+        // print('Register successfully: $responseData'
+        // );
 
         var jsonData = json.decode(responseData);
         final user = UserModel(
@@ -285,34 +286,53 @@ class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> updateUser(String id, String email, String phone,
-      String fullName, String address) async {
-    final url = Uri.parse('${ApiConfig.updateUser}$id');
+  Future<void> updateUser(
+    String id,
+    String name,
+    String email,
+    String phone,
+    String fullName,
+    String address,
+  ) async {
+    final url = Uri.parse(ApiConfig.updateUser);
     final token = await getToken();
 
-    final headers = {
-      'accept': '*/*',
-      'Content-Type': 'application/json-patch+json',
-      'Authorization': 'Bearer $token'
-    };
+    if (token == null || token.isEmpty) {
+      throw Exception("Authentication failed: Token is null or empty.");
+    }
 
-    final body = jsonEncode({
-      'email': email,
-      'phone': phone,
-      'fullname': fullName,
-      'address': address,
-    });
+    final imageData = await _loadImageFromAssets('assets/account.png');
+    if (imageData.isEmpty) {
+      throw Exception("Image data is empty: Failed to load image from assets.");
+    }
+
+    final request = http.MultipartRequest('PUT', url)
+      ..headers['Authorization'] = 'Bearer $token'
+      ..headers['accept'] = '*/*'
+      ..fields['Username'] = name
+      ..fields['Email'] = email
+      ..fields['Phone'] = phone
+      ..fields['Fullname'] = fullName
+      ..fields['Address'] = address
+      ..files.add(
+        http.MultipartFile.fromBytes(
+          'Avatar', // Match your server field
+          imageData,
+          filename: 'account.png',
+          contentType: MediaType('image', 'png'),
+        ),
+      );
 
     try {
-      final response = await http.put(url, headers: headers, body: body);
-
-      // print(response.statusCode);
+      final response = await request.send();
       if (response.statusCode == 200) {
       } else {
-        throw Exception("Login failed: Invalid credentials or server error");
+        final responseBody = await response.stream.bytesToString();
+        throw Exception(
+            "Failed to update user. Status code: ${response.statusCode}. Error: $responseBody");
       }
     } catch (e) {
-      throw Exception("Login failed: $e");
+      throw Exception("Update failed: $e");
     }
   }
 
@@ -332,8 +352,6 @@ class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
         final data = jsonDecode(response.body);
         final token = data['token'] as String?;
 
-        print(token);
-
         // Xử lý thành công
         if (token != null) {
           return token;
@@ -345,6 +363,37 @@ class AuthRemoteDataSourceImple implements AuthRemoteDataSource {
       }
     } catch (e) {
       throw Exception("Fail to send verify code: $e");
+    }
+  }
+
+  @override
+  Future<void> changePassword(
+      {required String oldpass, required String newpass}) async {
+    final url = Uri.parse(ApiConfig.changePass);
+
+    final token = await getToken();
+
+    final headers = {
+      'accept': '*/*',
+      'Authorization': 'Bearer $token',
+    };
+
+    final request = http.MultipartRequest('POST', url)
+      ..headers.addAll(headers)
+      ..fields['OldPassword'] = oldpass
+      ..fields['NewPassword'] = newpass;
+
+    try {
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        final responseBody = await response.stream.bytesToString();
+      } else {
+        final errorBody = await response.stream.bytesToString();
+        throw ServerException(errorBody);
+      }
+    } catch (e) {
+      throw ServerException(e.toString());
     }
   }
 }

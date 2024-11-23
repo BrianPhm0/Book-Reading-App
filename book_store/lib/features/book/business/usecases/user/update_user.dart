@@ -10,18 +10,19 @@ class UpdateUser implements UseCase<void, UpdateUserParams> {
 
   @override
   Future<Either<Failure, void>> call(UpdateUserParams params) async {
-    return await authRepository.updateUser(
-        params.id, params.email, params.phone, params.fullName, params.address);
+    return await authRepository.updateUser(params.id, params.name, params.email,
+        params.phone, params.fullName, params.address);
   }
 }
 
 class UpdateUserParams {
   final String id;
+  final String name;
   final String email;
   final String phone;
   final String fullName;
   final String address;
 
   UpdateUserParams(
-      this.id, this.email, this.phone, this.fullName, this.address);
+      this.id, this.name, this.email, this.phone, this.fullName, this.address);
 }

@@ -1,4 +1,3 @@
-import 'package:book_store/core/common/cubits/cubit/user_cubit.dart';
 import 'package:book_store/core/common/widgets/loader.dart';
 import 'package:book_store/core/utils/show_snackbar.dart';
 import 'package:book_store/features/book/business/entities/user/user.dart';
@@ -30,6 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
+    context.read<AuthBloc>().add(AuthGetUser());
 
     /// Khởi tạo các controller rỗng
     nameController = TextEditingController();
@@ -83,9 +83,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        child: BlocBuilder<UserCubit, UserState>(
+        child: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is UpdateUserSuccess) {
+              showSnackBar(context, 'Update information successfully');
+            }
+          },
           builder: (context, userState) {
-            if (userState is UserLoggedIn) {
+            if (userState is AuthLoading) {
+              return Container(
+                margin: const EdgeInsets.only(top: 200),
+                child: const Center(
+                    child: Loader(size: 50.0, color: Colors.black)),
+              );
+            }
+            if (userState is AuthSuccess) {
               final user = userState.user;
 
               /// Cập nhật giá trị ban đầu từ dữ liệu người dùng
@@ -95,11 +107,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   user.address ?? 'Add your address number';
 
               return _buildSettings(context, user);
-            } else if (userState is AuthLoading) {
-              return const Loader();
-            } else {
-              return const SizedBox();
+            } else if (userState is UpdateUserSuccess) {
+              context.read<AuthBloc>().add(AuthGetUser());
             }
+
+            return const Center(child: Loader(size: 50.0, color: Colors.black));
           },
         ),
       ),
@@ -109,9 +121,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildSettings(BuildContext context, User user) {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is UpdateUserSuccess) {
-          showSnackBar(context, 'Update information successfully');
-        }
+        // if (state is UpdateUserSuccess) {
+        //   showSnackBar(context, 'Update information successfully');
+        // }
       },
       builder: (context, state) {
         return SafeArea(
@@ -172,6 +184,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         _formHandler.submit(() {
                           context.read<AuthBloc>().add(UpdateUserEvent(
                               user.userId!,
+                              user.username!,
                               user.email,
                               phoneController.text.trim(),
                               nameController.text.trim(),

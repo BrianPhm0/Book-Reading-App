@@ -6,6 +6,7 @@ class BookItemModel extends BookItem {
     super.title,
     super.brandId,
     super.price,
+    super.linkEbook,
     super.uploadDate,
     super.quantity,
     super.typeBookId,
@@ -24,6 +25,7 @@ class BookItemModel extends BookItem {
           ? List<String>.from(json['brandId'].map((id) => id.toString()))
           : null,
       json['price']?.toString(),
+      json['linkEbook']?.toString() ?? '',
       json['uploadDate'] != null
           ? DateTime.parse(json['uploadDate']).toString()
           : null,

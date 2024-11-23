@@ -48,7 +48,7 @@ class _CheckOutScreenState extends State<CheckOutScreen> {
       body: BlocConsumer<CheckBloc, CheckState>(
         listener: (context, state) {
           if (state is CheckSuccess) {
-            print(state);
+            // print(state);
             context.read<CheckBloc>().add(ResetCheckEvent());
             context.goNamed(AppRoute.paymentSuccess.name);
           }

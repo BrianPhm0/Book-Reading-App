@@ -22,7 +22,6 @@ class DetailDataImpl implements DetailData {
   @override
   Future<BookItemModel> getDetail(String id) async {
     final url = Uri.parse('${ApiConfig.detailBook}$id');
-    final token = await getToken();
 
     final headers = {'accept': '*/*'};
     try {

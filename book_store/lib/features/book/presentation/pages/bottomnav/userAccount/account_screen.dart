@@ -19,6 +19,13 @@ class AccountScreen extends StatefulWidget {
 /// username, password, email, phone, address,
 class _AccountScreenState extends State<AccountScreen> {
   @override
+  void initState() {
+    super.initState();
+    // Chỉ gọi sự kiện để lấy loại sách khi cây widget đã được xây dựng
+    context.read<AuthBloc>().add(AuthGetUser());
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
@@ -55,15 +62,19 @@ class _AccountScreenState extends State<AccountScreen> {
             builder: (context, userState) {
               if (userState is AuthSuccess) {
                 final user = userState.user;
+
                 // print(user);
                 return _buildAccountContent(context, user);
               } else if (userState is AuthLoading) {
-                return const Center(
-                    child: Loader(size: 50.0, color: Colors.black));
+                return Container(
+                  margin: const EdgeInsets.only(top: 200),
+                  child: const Center(
+                      child: Loader(size: 50.0, color: Colors.black)),
+                );
               } else {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  context.goNamed(AppRoute.login.name);
-                });
+                // WidgetsBinding.instance.addPostFrameCallback((_) {
+                // context.goNamed(AppRoute.bottomnav.name);
+                // });
                 return const SizedBox(); // Return an empty widget
               }
             },
@@ -178,6 +189,7 @@ class _AccountScreenState extends State<AccountScreen> {
         borderColor: Colors.red,
         onPressed: () {
           context.read<AuthBloc>().add(AuthUserSignOut());
+          context.goNamed(AppRoute.bottomnav.name);
         },
       ),
     );

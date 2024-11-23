@@ -1,7 +1,6 @@
 import 'package:book_store/core/common/widgets/dialog.dart';
 import 'package:book_store/core/common/widgets/loader.dart';
 import 'package:book_store/core/utils/show_snackbar.dart';
-import 'package:book_store/features/book/business/entities/user/user_args.dart';
 import 'package:book_store/features/book/presentation/bloc/auth/auth_bloc.dart';
 
 import 'package:book_store/features/book/presentation/providers/handleSubmit.dart';
@@ -14,15 +13,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class VerifyScreen extends StatefulWidget {
-  final UserArgs userArgs;
-  const VerifyScreen({super.key, required this.userArgs});
+class VerifyPassword extends StatefulWidget {
+  final String email;
+  const VerifyPassword({
+    super.key,
+    required this.email,
+  });
 
   @override
-  State<VerifyScreen> createState() => _ForgotPassState();
+  State<VerifyPassword> createState() => _ForgotPassState();
 }
 
-class _ForgotPassState extends State<VerifyScreen> {
+class _ForgotPassState extends State<VerifyPassword> {
   final verifyController = TextEditingController();
   late String verifyCode;
   //form key
@@ -33,10 +35,10 @@ class _ForgotPassState extends State<VerifyScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<AuthBloc>().add(VerifyCodeEvent(widget.userArgs.email));
+    context.read<AuthBloc>().add(VerifyCodeEvent(widget.email));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       showDialogAuth(context, '', 'Verification Code Sent',
-          'A code has been sent to your email. Check your inbox (or spam folder) and enter the code below to continue.\nDidn’t get it? Wait a moment, then tap "Resend Code."'); // Customize your dialog message here
+          'A code has been sent to your email. Check your inbox (or spam folder) and enter the code below to continue.\nDidn’t get it? Wait a moment, then tap "Resend Code."');
     });
 
     _formHandler = FormHandler(formKey: formKey, controllers: [
@@ -61,7 +63,7 @@ class _ForgotPassState extends State<VerifyScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: const CustomAppBar(
-          title: 'Verify Account',
+          title: 'Verify Code',
         ),
         body: SizedBox.expand(
           child: Stack(
@@ -83,10 +85,6 @@ class _ForgotPassState extends State<VerifyScreen> {
                               verifyCode = state.verifyCode!;
                             });
                           }
-                          if (state is AuthSuccess) {
-                            context.goNamed(AppRoute.login.name);
-                            showSnackBar(context, 'Sign up successfully');
-                          }
                         },
                         child: Form(
                           key: formKey,
@@ -106,8 +104,9 @@ class _ForgotPassState extends State<VerifyScreen> {
                                   fontSize: 18,
                                   name: 'Resend code',
                                   onPressed: () {
-                                    context.read<AuthBloc>().add(
-                                        VerifyCodeEvent(widget.userArgs.email));
+                                    context
+                                        .read<AuthBloc>()
+                                        .add(VerifyCodeEvent(widget.email));
                                     showSnackBar(context,
                                         'A new code has been sent to your email. Please check your inbox (or spam folder) shortly.');
                                   },
@@ -124,10 +123,8 @@ class _ForgotPassState extends State<VerifyScreen> {
                                     _formHandler.submit(() {
                                       if (verifyController.text.trim() ==
                                           verifyCode) {
-                                        context.read<AuthBloc>().add(AuthSignUp(
-                                            email: widget.userArgs.email,
-                                            password: widget.userArgs.password,
-                                            name: widget.userArgs.name));
+                                        context
+                                            .pushNamed(AppRoute.newPass.name);
                                       } else {
                                         showSnackBar(context,
                                             "The code you entered is incorrect. Please try again.");

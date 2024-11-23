@@ -11,7 +11,6 @@ import 'package:book_store/features/book/presentation/bloc/detail/detail_bloc.da
 import 'package:book_store/features/book/presentation/bloc/voucher/voucher_bloc.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
 import 'package:book_store/init_dependencies.dart';
-import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -19,69 +18,62 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initDependencies();
   runApp(
-    DevicePreview(
-      enabled: true,
-      tools: const [
-        ...DevicePreview.defaultTools,
-        // CustomPlugin(),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          // handle authentication logic
+          create: (context) => serviceLocator<AuthBloc>(),
+        ),
+        BlocProvider(
+          // handle user logic
+          create: (context) => serviceLocator<UserCubit>(),
+        ),
+        BlocProvider(
+          // handle book logic
+          create: (context) => serviceLocator<BookBloc>(),
+          lazy: false,
+        ),
+        BlocProvider(
+          // handle book logic
+          create: (context) => serviceLocator<HomeBloc>(),
+          lazy: false,
+        ),
+        BlocProvider(
+          // handle book logic
+          create: (context) => serviceLocator<CartBloc>(),
+          lazy: false,
+        ),
+        BlocProvider(
+          // handle book logic
+          create: (context) => serviceLocator<AddressBloc>(),
+          lazy: false,
+        ),
+        BlocProvider(
+          // handle book logic
+          create: (context) => serviceLocator<CheckBloc>(),
+          lazy: false,
+        ),
+        BlocProvider(
+          // handle book logic
+          create: (context) => serviceLocator<DetailBloc>(),
+          lazy: false,
+        ),
+        BlocProvider(
+          // handle book logic
+          create: (context) => serviceLocator<VoucherBloc>(),
+          lazy: false,
+        ),
+        BlocProvider(
+          // handle book logic
+          create: (context) => serviceLocator<OrderBloc>(),
+          lazy: false,
+        ),
+        // Add a different bloc here if needed
+        // BlocProvider(
+        //   create: (context) => AnotherBloc(), // Replace with another bloc
+        // ),
       ],
-      builder: (context) => MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            // handle authentication logic
-            create: (context) => serviceLocator<AuthBloc>(),
-          ),
-          BlocProvider(
-            // handle user logic
-            create: (context) => serviceLocator<UserCubit>(),
-          ),
-          BlocProvider(
-            // handle book logic
-            create: (context) => serviceLocator<BookBloc>(),
-            lazy: false,
-          ),
-          BlocProvider(
-            // handle book logic
-            create: (context) => serviceLocator<HomeBloc>(),
-            lazy: false,
-          ),
-          BlocProvider(
-            // handle book logic
-            create: (context) => serviceLocator<CartBloc>(),
-            lazy: false,
-          ),
-          BlocProvider(
-            // handle book logic
-            create: (context) => serviceLocator<AddressBloc>(),
-            lazy: false,
-          ),
-          BlocProvider(
-            // handle book logic
-            create: (context) => serviceLocator<CheckBloc>(),
-            lazy: false,
-          ),
-          BlocProvider(
-            // handle book logic
-            create: (context) => serviceLocator<DetailBloc>(),
-            lazy: false,
-          ),
-          BlocProvider(
-            // handle book logic
-            create: (context) => serviceLocator<VoucherBloc>(),
-            lazy: false,
-          ),
-          BlocProvider(
-            // handle book logic
-            create: (context) => serviceLocator<OrderBloc>(),
-            lazy: false,
-          ),
-          // Add a different bloc here if needed
-          // BlocProvider(
-          //   create: (context) => AnotherBloc(), // Replace with another bloc
-          // ),
-        ],
-        child: const MyWidget(), // Your main widget goes here
-      ),
+      child: const MyWidget(), // Your main widget goes here
     ),
   );
 }

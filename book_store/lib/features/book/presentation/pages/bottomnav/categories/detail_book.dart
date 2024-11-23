@@ -2,7 +2,7 @@ import 'package:book_store/core/common/widgets/loader.dart';
 import 'package:book_store/features/book/business/entities/book_by_category/book_item.dart';
 import 'package:book_store/features/book/business/entities/review/review.dart';
 import 'package:book_store/features/book/business/entities/user/user.dart';
-import 'package:book_store/features/book/presentation/bloc/book/bloc/home/home_bloc.dart';
+import 'package:book_store/features/book/presentation/bloc/auth/auth_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/cart/bloc/cart_bloc.dart';
 import 'package:book_store/features/book/presentation/bloc/detail/detail_bloc.dart';
 import 'package:book_store/features/book/presentation/providers/route.dart';
@@ -30,7 +30,8 @@ class _DetailBookState extends State<DetailBook> {
   @override
   void initState() {
     super.initState();
-    // Chỉ gọi sự kiện để lấy loại sách khi cây widget đã được xây dựng
+    context.read<AuthBloc>().add(AuthIsTokendIn());
+
     context.read<DetailBloc>().add(GetDetailEvent(widget.book.bookId));
   }
 
@@ -43,7 +44,9 @@ class _DetailBookState extends State<DetailBook> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            context.read<HomeBloc>().add(GetHomeBookEvent());
+            // context.read<HomeBloc>().add(GetHomeBookEvent());
+            // context.read<HomeBloc>().add(GetHomeBookEvent());
+            // context.read<BookBloc>().add(GetAllBookType());
             Navigator.of(context).pop();
           },
         ),
@@ -62,6 +65,7 @@ class _DetailBookState extends State<DetailBook> {
           }
         },
         builder: (context, state) {
+          // print(state);
           // print(state);
           if (state is DetailLoading) {
             return const Center(child: Loader(size: 50.0, color: Colors.black));
@@ -162,8 +166,19 @@ class _DetailBookState extends State<DetailBook> {
                                               textColor: Colors.black,
                                               name: 'HardCover',
                                               onPressed: () {
-                                                _showBottomDialog(
-                                                    context, detail);
+                                                final isLoggedIn = context
+                                                    .read<AuthBloc>()
+                                                    .state is AuthTokenSuccess;
+
+                                                if (isLoggedIn) {
+                                                  // User is logged in, proceed as usual
+                                                  _showBottomDialog(
+                                                      context, detail);
+                                                } else {
+                                                  // User is not logged in, navigate to the login screen
+                                                  context.pushNamed(
+                                                      AppRoute.login.name);
+                                                }
                                               },
                                             ),
                                       const SizedBox(

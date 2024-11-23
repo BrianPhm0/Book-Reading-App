@@ -43,4 +43,11 @@ final class VerifyCodeSuccess extends AuthState {
 
   const VerifyCodeSuccess(this.verifyCode);
 }
+
+final class ChangePassSuccess extends AuthState {}
+
+final class AuthPassFail extends AuthState {
+  final String? message;
+  const AuthPassFail([this.message]);
+}
 // final class AuthCurrUser extends AuthState {}

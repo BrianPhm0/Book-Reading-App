@@ -76,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 if (state is AuthFailure) {
                   showSnackBar(context, state.message);
                 } else if (state is AuthTokenSuccess) {
-                  context.goNamed(AppRoute.bottomnav.name);
+                  Navigator.of(context).pop();
                 }
               },
               builder: (context, state) {
@@ -171,15 +171,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ],
                         ),
-                        // CustomTextButton(
-                        //   fontSize: 2,
-                        //   name: 'Use as a Guest?',
-                        //   onPressed: () {
-                        //     // Handle the Register button press
-                        //     context.pushNamed(AppRoute.bottomnav.name);
-                        //   },
-                        //   underlineCheck: true,
-                        // ),
                       ],
                     ),
                   ),

@@ -88,7 +88,7 @@ Widget buildStatus(
     },
     child: SizedBox(
       width: double.infinity,
-      height: 150,
+      height: 180,
       child: Container(
         margin: const EdgeInsets.only(bottom: 20),
         decoration: BoxDecoration(
@@ -107,6 +107,9 @@ Widget buildStatus(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const SizedBox(
+              width: 5,
+            ),
             Flexible(
               flex: 4,
               child: Image.network(

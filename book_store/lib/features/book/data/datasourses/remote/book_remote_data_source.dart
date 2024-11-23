@@ -150,10 +150,10 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
             List<BookItemModel> list = items.map((bookJson) {
               return BookItemModel.fromJson(bookJson);
             }).toList();
-           
+
+            // print(list);
 
             return list;
-           
           } else {
             throw Exception(
                 'API response does not contain "items" as expected.');
@@ -167,7 +167,6 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
             'Failed to load books with status code: ${res.statusCode}');
       }
     } catch (e) {
-      
       throw ServerException(e.toString());
     }
   }

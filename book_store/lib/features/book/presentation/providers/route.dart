@@ -19,7 +19,9 @@ import 'package:book_store/features/book/presentation/pages/bottomnav/userAccoun
 import 'package:book_store/features/book/presentation/pages/bottomnav/userAccount/settings_screen.dart';
 import 'package:book_store/features/book/presentation/pages/userlogin/forgot_pass.dart';
 import 'package:book_store/features/book/presentation/pages/userlogin/login_screen.dart';
+import 'package:book_store/features/book/presentation/pages/userlogin/newpass.dart';
 import 'package:book_store/features/book/presentation/pages/userlogin/sign_up_screen.dart';
+import 'package:book_store/features/book/presentation/pages/userlogin/verify_password.dart';
 import 'package:book_store/features/book/presentation/pages/userlogin/verify_screen.dart';
 
 import 'package:go_router/go_router.dart';
@@ -46,7 +48,9 @@ enum AppRoute {
   detailHistory,
   readingBook,
   claimVoucher,
-  verify
+  verify,
+  verifyPass,
+  newPass
 }
 
 class AppRouter {
@@ -233,6 +237,27 @@ class AppRouter {
           return VerifyScreen(
             userArgs: args,
           );
+        },
+      ),
+
+      GoRoute(
+        path: '/verifyPass',
+        name: AppRoute.verifyPass.name,
+        builder: (context, state) {
+          final arg = state.extra as String;
+
+          return VerifyPassword(
+            email: arg,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/newPass',
+        name: AppRoute.newPass.name,
+        builder: (context, state) {
+          // final arg = state.extra as String;
+
+          return const Newpass();
         },
       ),
     ],
